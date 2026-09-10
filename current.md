@@ -16,15 +16,15 @@ Update this file as features complete. Check boxes as you go.
 | Colab | C-4 Lesion U-Nets | ⬜ Not started |
 | Colab | C-5 OD detector | ⬜ Not started |
 | Colab | C-6 Handoff | ⬜ Not started |
-| MATLAB | M-0 Setup | ⬜ Not started |
-| MATLAB | M-1 Preprocessing | ⬜ Not started |
-| MATLAB | M-2 Grading inference | ⬜ Not started |
-| MATLAB | M-3 Segmentation inference | ⬜ Not started |
-| MATLAB | M-4 Explainability | ⬜ Not started |
-| MATLAB | M-5 Data layer | ⬜ Not started |
-| MATLAB | M-6 Simulink | ⬜ Not started |
-| MATLAB | M-7 Frontend | ⬜ Not started |
-| MATLAB | M-8 Integration | ⬜ Not started |
+| MATLAB | M-0 Setup | ✅ Done (R2026a, all toolboxes + ONNX converter, ONNX import OK, uihtml bridge OK) |
+| MATLAB | M-1 Preprocessing | ✅ Done — 12/12 real APTOS images gradable; blur/dark/partial-frame correctly downgraded; thresholds tuned 2026-09-09 |
+| MATLAB | M-2 Grading inference | 🔄 Rules grader done + ONNX ResNet-50 path ready. Eval on 28 labelled APTOS: QWK 0.43, referable sens 53% / spec 100%, within-1 75%. Classical tops out here — **90% sensitivity target NEEDS dr_grader.onnx from Colab.** |
+| MATLAB | M-3 Segmentation inference | 🔄 Classical path done (morphology: vessels, OD, MA/HE/EX + overlay). Value = explainability overlay + offline fallback, not benchmark accuracy. ONNX U-Net path stubbed. |
+| MATLAB | M-4 Explainability | ✅ Heatmap (lesion-evidence now, real Grad-CAM when ONNX arrives) + evidence view + one-page-ish PDF report. All generate. Healthy→clean heatmap, severe→lit. |
+| MATLAB | M-5 Data layer | ✅ .mat table: saveScreening / getHistory (trend string) / saveReviewDecision / dbStats. Persists across sessions. |
+| MATLAB | M-6 Simulink | ✅ `simulink/netra_telemedicine.slx` (7-block SimEvents model + 2 scopes, simulates clean) built by `buildTelemedicineModel.m`, run by `simulateTelemedicine.m`. Rigorous numbers from `queueSim.m`/`runSimulation.m`: district (100k/yr) needs **3 ophthalmologists** for p95 wait <24h; bandwidth 2 vs 50 Mbps barely matters. |
+| MATLAB | M-7 Frontend | ✅ NetraApp.m (uifigure+uihtml, no App Designer) + dashboard.html/css/js. Renders correctly for gradable + ungradable (screenshots in images/_debug/). Agree/Override/Open-PDF wired. Images sent as base64 data URIs. |
+| MATLAB | M-8 Integration | 🔄 runPipeline.m end-to-end (~9s cold / 3s warm). Ungradable early-exit + 5 error cases handled (test_errors). APTOS eval (evalGrading): QWK 0.44, sens 59%/spec 100% (rules). validateMessidor2.m built + wiring-tested (parses Kaggle/Google/ADCIS CSV formats, parfor, subset limit) — needs the dataset downloaded to data/messidor2/. PPT + real Messidor-2 run + demo pending. |
 
 **Status key:** ⬜ Not started · 🔄 In progress · ✅ Done · 🔴 Blocked
 

@@ -1,0 +1,21 @@
+# --- Data & models (shared via Kaggle / Google Drive, never git) ---
+/data/
+/models/*.onnx
+/models/*.mat
+
+# --- Generated at runtime ---
+/images/
+/reports/
+*.mat
+
+# --- MATLAB junk ---
+*.asv
+*.m~
+slprj/
+*.slxc
+octave-workspace
+resources/project/*.info.xml
+
+# --- OS ---
+.DS_Store
+Thumbs.db

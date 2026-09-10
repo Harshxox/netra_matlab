@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Netra uihtml bridge PoC</title>
+  <style>
+    body { font-family: system-ui, sans-serif; background:#0F172A; color:#E2E8F0;
+           display:flex; flex-direction:column; align-items:center; gap:16px;
+           padding-top:40px; }
+    button { padding:10px 20px; border:none; border-radius:6px; background:#0D9488;
+             color:#fff; font-weight:600; cursor:pointer; }
+    #reply { font-size:18px; padding:12px 20px; background:#1E293B; border-radius:6px;
+             min-width:260px; text-align:center; }
+    #log { font-size:12px; color:#94A3B8; white-space:pre-wrap; }
+  </style>
+</head>
+<body>
+  <h2>uihtml two-way bridge</h2>
+  <button id="pingBtn">Ping MATLAB</button>
+  <div id="reply">Waiting for MATLAB...</div>
+  <div id="log"></div>
+
+  <script type="text/javascript">
+    // uihtml automatically calls a GLOBAL function named `setup` and passes it
+    // the htmlComponent object. This is the ONLY correct entry point.
+    // htmlComponent has:  .Data   .sendEventToMATLAB(name, data)   .addEventListener(name, cb)
+
+    function log(msg) {
+      document.getElementById("log").textContent += msg + "\n";
+    }
+
+    function setup(htmlComponent) {
+      log("setup() called - bridge is live");
+
+      // ---- MATLAB -> HTML : listen for a named event from MATLAB ----------
+      htmlComponent.addEventListener("pong", function (event) {
+        document.getElementById("reply").textContent = event.Data.msg;
+        log("received 'pong' from MATLAB");
+      });
+
+      // ---- MATLAB -> HTML : react when MATLAB changes the Data property ---
+      htmlComponent.addEventListener("DataChanged", function () {
+        log("Data changed: " + JSON.stringify(htmlComponent.Data));
+      });
+
+      // ---- HTML -> MATLAB : send a named event to MATLAB -----------------
+      document.getElementById("pingBtn").addEventListener("click", function () {
+        htmlComponent.sendEventToMATLAB("ping", { when: Date.now() });
+        log("sent 'ping' to MATLAB");
+      });
+    }
+  </script>
+</body>
+</html>

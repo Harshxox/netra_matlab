@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Netra - DR Screening</title>
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+  <header id="topbar">
+    <span class="brand">Netra</span>
+    <span id="patientId">--</span>
+    <span class="eye-toggle">
+      <button id="eyeOD" class="eye active" data-eye="OD">OD</button>
+      <button id="eyeOS" class="eye"        data-eye="OS">OS</button>
+    </span>
+    <span id="qualityChip" class="chip">--</span>
+    <span class="spacer"></span>
+    <span id="reviewTimer">0:30</span>
+  </header>
+
+  <main id="content">
+    <!-- image viewer -->
+    <section id="image-panel">
+      <img id="fundusImg" alt="fundus">
+      <div id="layer-toggles">
+        <button class="layer active" data-layer="evidence">Evidence</button>
+        <button class="layer" data-layer="gradcam">Heatmap</button>
+        <button class="layer" data-layer="lesionOverlay">Lesions</button>
+        <button class="layer" data-layer="vesselMap">Vessels</button>
+        <button class="layer" data-layer="enhanced">Enhanced</button>
+        <button class="layer" data-layer="original">Original</button>
+      </div>
+    </section>
+
+    <!-- results -->
+    <aside id="results-panel">
+      <div id="verdict" class="verdict">--</div>
+
+      <div class="block">
+        <div class="label">DR Grade</div>
+        <div id="grade-pips">
+          <span class="pip" data-g="0">0</span>
+          <span class="pip" data-g="1">1</span>
+          <span class="pip" data-g="2">2</span>
+          <span class="pip" data-g="3">3</span>
+          <span class="pip" data-g="4">4</span>
+        </div>
+        <div id="gradeLabel" class="sub">--</div>
+      </div>
+
+      <div class="block">
+        <div class="label">Confidence <span id="confPct">--</span></div>
+        <div class="bar"><div id="confFill"></div></div>
+        <div id="method" class="sub"></div>
+      </div>
+
+      <div class="block">
+        <div class="label">Why this grade</div>
+        <ul id="whyList"></ul>
+      </div>
+
+      <div class="block">
+        <div class="label">Lesions</div>
+        <table id="lesionTable">
+          <tr><td>Microaneurysms</td><td id="lesMA">--</td></tr>
+          <tr><td>Hemorrhages</td><td id="lesHE">--</td></tr>
+          <tr><td>Exudate area</td><td id="lesEX">--</td></tr>
+          <tr><td>Neovascularization</td><td id="lesNV">--</td></tr>
+        </table>
+      </div>
+
+      <div class="block" id="historyBlock">
+        <div class="label">History</div>
+        <div id="historyTrend" class="sub">--</div>
+      </div>
+    </aside>
+  </main>
+
+  <footer id="action-bar">
+    <button id="btnAgree"  class="act agree">&#10003; Agree</button>
+    <button id="btnOverride" class="act override">&#9998; Override</button>
+    <span id="overridePanel" hidden>
+      <select id="overrideGrade">
+        <option value="0">0 - No DR</option>
+        <option value="1">1 - Mild</option>
+        <option value="2">2 - Moderate</option>
+        <option value="3">3 - Severe</option>
+        <option value="4">4 - Proliferative</option>
+      </select>
+      <input id="overrideNotes" type="text" placeholder="Notes...">
+      <button id="btnOverrideSave" class="act agree">Save</button>
+    </span>
+    <span class="spacer"></span>
+    <span id="statusMsg"></span>
+    <button id="btnPdf" class="act pdf">&#8681; Open PDF</button>
+  </footer>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>

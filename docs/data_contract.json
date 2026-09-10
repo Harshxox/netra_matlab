@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "1.0",
+  "patientId": "",
+  "eye": "OD",
+  "date": "",
+  "quality": {
+    "status": "gradable",
+    "focusScore": 0,
+    "illuminationScore": 0,
+    "fovRatio": 0,
+    "enhanced": false
+  },
+  "result": {
+    "grade": 0,
+    "gradeLabel": "No DR",
+    "referable": false,
+    "confidence": 0,
+    "classProbabilities": [0, 0, 0, 0, 0]
+  },
+  "lesions": {
+    "maCount": 0,
+    "heCount": 0,
+    "exudateAreaPct": 0,
+    "nvPresent": false,
+    "odCentroid": [0, 0]
+  },
+  "images": {
+    "original": "",
+    "enhanced": "",
+    "gradcam": "",
+    "lesionOverlay": "",
+    "vesselMap": "",
+    "evidence": ""
+  },
+  "history": {
+    "priorGrades": [],
+    "trend": ""
+  },
+  "routing": "routine_followup",
+  "review": {
+    "status": "pending",
+    "finalGrade": null,
+    "notes": "",
+    "reviewerId": "",
+    "timestamp": ""
+  },
+  "clinical": null,
+  "secondaryFindings": null
+}
