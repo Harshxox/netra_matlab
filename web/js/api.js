@@ -31,8 +31,12 @@
     });
   }
 
+  // ngrok's free tier serves a browser interstitial instead of the real
+  // response unless this header is present. Harmless everywhere else.
+  const SKIP_WARN = { 'ngrok-skip-browser-warning': 'true' };
+
   async function req(method, path, body) {
-    const opts = { method, headers: {} };
+    const opts = { method, headers: Object.assign({}, SKIP_WARN) };
     if (body !== undefined) {
       opts.headers['Content-Type'] = 'application/json';
       opts.body = JSON.stringify(body);
@@ -66,7 +70,7 @@
   API.probe = async function () {
     try {
       const res = await withTimeout(
-        fetch(BASE + '/api/health'),
+        fetch(BASE + '/api/health', { headers: SKIP_WARN }),
         cfg.probeTimeout || 4000
       );
       const data = await res.json();
@@ -91,6 +95,40 @@
     if (API.online) return BASE + u;
     // offline: snapshot stores plain relative paths under web/
     return u.replace(/^\/api\/file\?p=/, '').replace(/%2F/gi, '/');
+  };
+
+  const blobCache = new Map();
+
+  /**
+   * Point an <img> at a pipeline image.
+   *
+   * An <img src> cannot send headers, so behind ngrok's free tier it would
+   * receive the browser-interstitial HTML instead of the PNG. When the
+   * backend is on another origin we fetch the bytes with the skip header and
+   * hand the element an object URL instead.
+   */
+  API.setImage = async function (el, u) {
+    if (!el || !u) return;
+    const url = API.fileUrl(u);
+    if (!url) return;
+
+    const sameOrigin = !BASE || url.startsWith(location.origin) || !/^https?:/.test(url);
+    if (sameOrigin) { el.src = url; return; }
+
+    if (blobCache.has(url)) { el.src = blobCache.get(url); return; }
+
+    try {
+      const res = await fetch(url, { headers: SKIP_WARN });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const blob = await res.blob();
+      if (!/^image\//.test(blob.type)) throw new Error('not an image: ' + blob.type);
+      const obj = URL.createObjectURL(blob);
+      blobCache.set(url, obj);
+      el.src = obj;
+    } catch (e) {
+      console.warn('[netra] image load failed:', url, e.message);
+      el.removeAttribute('src');
+    }
   };
 
   // ---------------------------------------------------------------
