@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    (function () {
+      const role = localStorage.getItem('netra_active_role');
+      if (role === 'patient') window.location.replace('dashboard.html');
+      if (role === 'specialist' || role === 'phc' || role === 'district') window.location.replace('doctor-dashboard.html');
+    }());
+  </script>
+  <title>Netra — AI-Powered Eye Care for Everyone</title>
+  <meta name="description" content="Explainable AI Diabetic Retinopathy screening and comprehensive eye care platform for rural and urban India.">
+  
+  <!-- CSS Design System & Adaptive Color Tokens -->
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- ========================================================================
+       TOP GLOBAL HEADER (LANDING PAGE)
+       ======================================================================== -->
+  <header class="landing-header" id="mainHeader">
+    <div class="navbar-container">
+      <!-- Brand Logo -->
+      <a href="index.html" class="brand-logo">
+        <svg class="logo-eye-icon" viewBox="0 0 48 48" fill="none">
+          <circle cx="24" cy="24" r="22" stroke="currentColor" stroke-width="2.5" stroke-dasharray="4 2"/>
+          <circle cx="24" cy="24" r="14" stroke="currentColor" stroke-width="2"/>
+          <circle cx="24" cy="24" r="7" fill="currentColor"/>
+          <path d="M4 24C9 14 16 9 24 9C32 9 39 14 44 24C39 34 32 39 24 39C16 39 9 34 4 24Z" stroke="currentColor" stroke-width="2.5"/>
+        </svg>
+        <div class="brand-text">
+          <span class="brand-name" data-i18n="appName">Netra</span>
+          <span class="brand-tagline" data-i18n="appTagline">Clearer Vision, Healthier Tomorrow</span>
+        </div>
+      </a>
+
+      <!-- Navigation Links -->
+      <ul class="nav-links">
+        <li><a href="#home" class="nav-link active" data-i18n="navHome">Home</a></li>
+        <li><a href="#about" class="nav-link" data-i18n="navAbout">About</a></li>
+        <li><a href="#for-patients" class="nav-link" data-i18n="navForPatients">For Patients</a></li>
+        <li><a href="#resources" class="nav-link" data-i18n="navResources">Resources</a></li>
+        <li><a href="#contact" class="nav-link" data-i18n="navContact">Contact</a></li>
+      </ul>
+
+      <!-- Controls & Sign In -->
+      <div class="nav-actions">
+        <!-- Multilingual Dropdown (English, Hindi, Kannada) -->
+        <div class="lang-dropdown-wrapper">
+          <button class="btn-control" id="langDropdownBtn" aria-label="Select Language">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="2" y1="12" x2="22" y2="12"/>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>
+            <span id="langLabelLanding">English</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </button>
+          
+          <div class="lang-menu" id="langDropdownMenu">
+            <button class="lang-option active" data-lang="en">
+              <span> English</span>
+              <span class="check-mark">✓</span>
+            </button>
+            <button class="lang-option" data-lang="hi">
+              <span> हिंदी (Hindi)</span>
+            </button>
+            <button class="lang-option" data-lang="kn">
+              <span> ಕನ್ನಡ (Kannada)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Adaptive Color Token Theme Switcher -->
+        <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle Theme Mode">
+          <span id="themeToggleIcon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+          </span>
+          <span id="themeToggleText" data-i18n="themeLight">Light Mode</span>
+        </button>
+
+        <!-- Sign In Button -> navigates to login.html -->
+        <a href="login.html" class="btn-signin">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+          <span data-i18n="navSignIn">Sign In</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+
+  <!-- ========================================================================
+       LANDING PAGE CONTENT (Matches Reference Image 2)
+       ======================================================================== -->
+  <main id="landing-page-content">
+    <!-- HERO SECTION -->
+    <section class="landing-hero" id="home">
+      <div class="hero-grid">
+        <!-- Left Content -->
+        <div class="hero-content">
+          <div class="hero-kicker-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <circle cx="12" cy="12" r="10"/>
+            </svg>
+            <span data-i18n="heroBadge">AI-POWERED EYE CARE FOR EVERYONE</span>
+          </div>
+
+          <h1 class="hero-title">
+            <span data-i18n="heroTitlePrefix">Clearer Vision for a </span>
+            <span class="hero-title-highlight" data-i18n="heroTitleHighlight">Healthier</span>
+            <span data-i18n="heroTitleSuffix"> Tomorrow</span>
+          </h1>
+
+          <p class="hero-description" data-i18n="heroDesc">
+            Netra helps you take charge of your eye health with early detection, personalized guidance, and seamless care — anytime, anywhere.
+          </p>
+
+          <div class="hero-cta-group">
+            <a href="login.html" class="btn-primary">
+              <span data-i18n="heroCtaPrimary">Get Started</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="5" y1="12" x2="19" y2="12"/>
+                <polyline points="12 5 19 12 12 19"/>
+              </svg>
+            </a>
+            <a href="#how-it-works" class="btn-secondary">
+              <span data-i18n="heroCtaSecondary">Learn More</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="5 3 19 12 5 21 5 3"/>
+              </svg>
+            </a>
+          </div>
+
+          <!-- Hero 3 Key Pillars -->
+          <div class="hero-pillars">
+            <div class="pillar-item">
+              <svg class="pillar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+              <div class="pillar-text">
+                <h4 data-i18n="pillarEarlyDetection">Early Detection</h4>
+                <p data-i18n="pillarEarlyDetectionDesc">Catch issues before they worsen</p>
+              </div>
+            </div>
+
+            <div class="pillar-item">
+              <svg class="pillar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="8.5" cy="7" r="4"/>
+                <line x1="20" y1="8" x2="20" y2="14"/>
+                <line x1="23" y1="11" x2="17" y2="11"/>
+              </svg>
+              <div class="pillar-text">
+                <h4 data-i18n="pillarTrustedCare">Trusted Care</h4>
+                <p data-i18n="pillarTrustedCareDesc">Connect with eye care specialists</p>
+              </div>
+            </div>
+
+            <div class="pillar-item">
+              <svg class="pillar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+              <div class="pillar-text">
+                <h4 data-i18n="pillarBetterTomorrows">Better Tomorrows</h4>
+                <p data-i18n="pillarBetterTomorrowsDesc">For you and your loved ones</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Visual with Macro Eye & Concentric Rings -->
+        <div class="hero-visual-wrapper">
+          <div class="hero-orbit-ring ring-1"></div>
+          <div class="hero-orbit-ring ring-2"></div>
+          
+          <div class="hero-image-frame">
+            <img src="assets/images/healthy_eye.jpg" alt="Clear Healthy Eye Visual">
+          </div>
+
+          <!-- Script overlay text -->
+          <div class="hero-script-overlay" data-i18n="heroArtScript">
+            See<br>A Brighter<br>Tomorrow
+          </div>
+
+          <!-- Floating Badge -->
+          <div class="hero-floating-badge">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-9l6 4.5-6 4.5z"/>
+            </svg>
+            <div class="badge-lines">
+              <strong data-i18n="heroFloatingBadge">Your Eyes Our Priority<br><span>A Healthier India</span></strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 FEATURE CARDS -->
+    <section class="features-section" id="about">
+      <div class="features-grid">
+        <!-- Card 1: Screen Easily -->
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M3 7V5a2 2 0 0 1 2-2h2"/>
+              <path d="M17 3h2a2 2 0 0 1 2 2v2"/>
+              <path d="M21 17v2a2 2 0 0 1-2 2h-2"/>
+              <path d="M7 21H5a2 2 0 0 1-2-2v-2"/>
+            </svg>
+          </div>
+          <h3 data-i18n="featScreenTitle">Screen Easily</h3>
+          <p data-i18n="featScreenDesc">Get your eyes screened at a clinic or community camp.</p>
+        </div>
+
+        <!-- Card 2: Know Your Results -->
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <polyline points="10 9 9 9 8 9"/>
+            </svg>
+          </div>
+          <h3 data-i18n="featResultsTitle">Know Your Results</h3>
+          <p data-i18n="featResultsDesc">Understand your eye health in simple language.</p>
+        </div>
+
+        <!-- Card 3: Take Action -->
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+              <path d="M9 16l2 2 4-4"/>
+            </svg>
+          </div>
+          <h3 data-i18n="featActionTitle">Take Action</h3>
+          <p data-i18n="featActionDesc">Get reminders and personalized guidance.</p>
+        </div>
+
+        <!-- Card 4: Stay Supported -->
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </div>
+          <h3 data-i18n="featSupportTitle">Stay Supported</h3>
+          <p data-i18n="featSupportDesc">Connect with eye care professionals when needed.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW NETRA WORKS -->
+    <section class="how-it-works-section" id="how-it-works">
+      <div class="works-header">
+        <div>
+          <span class="works-kicker" data-i18n="worksKicker">A SIMPLE PATH TO BETTER EYE HEALTH</span>
+          <h2 class="works-title" data-i18n="worksTitle">How Netra Works</h2>
+          <p class="works-subtitle" data-i18n="worksSubtitle">Your eye health journey in just a few steps.</p>
+        </div>
+        <a href="#how-it-works" class="btn-watch-works">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <polygon points="5 3 19 12 5 21 5 3"/>
+          </svg>
+          <span data-i18n="worksWatch">Watch How It Works</span>
+        </a>
+      </div>
+
+      <div class="steps-row">
+        <!-- Step 1 -->
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-number">1</span>
+            <div class="step-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="8.5" cy="7" r="4"/>
+                <line x1="20" y1="8" x2="20" y2="14"/>
+                <line x1="23" y1="11" x2="17" y2="11"/>
+              </svg>
+            </div>
+          </div>
+          <h4 data-i18n="step1Title">Create Your Account</h4>
+          <p data-i18n="step1Desc">Sign up in a few minutes to get started.</p>
+          <svg class="step-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-number">2</span>
+            <div class="step-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              </svg>
+            </div>
+          </div>
+          <h4 data-i18n="step2Title">Get Screened</h4>
+          <p data-i18n="step2Desc">Visit a centre or camp for an eye screening.</p>
+          <svg class="step-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-number">3</span>
+            <div class="step-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+              </svg>
+            </div>
+          </div>
+          <h4 data-i18n="step3Title">View Your Results</h4>
+          <p data-i18n="step3Desc">Check your report and understand your eye health.</p>
+          <svg class="step-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="step-card">
+          <div class="step-header">
+            <span class="step-number">4</span>
+            <div class="step-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                <line x1="16" y1="2" x2="16" y2="6"/>
+                <line x1="8" y1="2" x2="8" y2="6"/>
+                <line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
+            </div>
+          </div>
+          <h4 data-i18n="step4Title">Follow Up</h4>
+          <p data-i18n="step4Desc">Get reminders and book appointments if needed.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIAL & IMPACT STATS -->
+    <section class="impact-section" id="for-patients">
+      <div class="impact-grid">
+        <!-- Clinical Early Detection Spotlight (No False "Cure" Claims) -->
+        <div class="spotlight-card">
+          <div class="spotlight-header-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            <span data-i18n="spotlightBadge">PREVENTABLE VISION LOSS</span>
+          </div>
+
+          <h3 class="spotlight-title" data-i18n="spotlightTitle">
+            Why Routine Retinal Screening Matters
+          </h3>
+
+          <p class="spotlight-lead" data-i18n="spotlightLead">
+            Diabetic Retinopathy develops silently with zero pain or early symptoms. Netra acts as a frontline triage screening system to catch microaneurysms before vision loss becomes irreversible.
+          </p>
+
+          <div class="spotlight-facts-grid">
+            <div class="spotlight-fact-item">
+              <div class="fact-bullet-icon">️</div>
+              <div>
+                <strong data-i18n="fact1Title">90%+ Preventable</strong>
+                <p data-i18n="fact1Desc">Over 90% of severe vision loss can be prevented through routine annual dilated screenings and timely medical referral.</p>
+              </div>
+            </div>
+
+            <div class="spotlight-fact-item">
+              <div class="fact-bullet-icon">⚡</div>
+              <div>
+                <strong data-i18n="fact2Title">45-Second Screening</strong>
+                <p data-i18n="fact2Desc">Fast, non-invasive fundus camera capture at your local Primary Health Centre (PHC) without long travel.</p>
+              </div>
+            </div>
+
+            <div class="spotlight-fact-item">
+              <div class="fact-bullet-icon"></div>
+              <div>
+                <strong data-i18n="fact3Title">Doctor-in-the-Loop Triage</strong>
+                <p data-i18n="fact3Desc">AI instantly assists frontline health workers and routes high-risk cases directly to district ophthalmologists.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="spotlight-footer">
+            <span class="spotlight-tag" data-i18n="spotlightTag">✓ Clinically Validated AI Triage Pipeline</span>
+            <a href="login.html" class="spotlight-action-link" data-i18n="spotlightLink">Book Baseline Screening →</a>
+          </div>
+        </div>
+
+        <!-- Impact Statistics -->
+        <div class="stats-card">
+          <h3 data-i18n="impactTitle">Making Eye Care Accessible for All</h3>
+          <div class="stats-subgrid">
+            <div class="stat-tile">
+              <div class="stat-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                  <circle cx="9" cy="7" r="4"/>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+              </div>
+              <div class="stat-numbers">
+                <h4 data-i18n="statScreened">10,000+</h4>
+                <p data-i18n="statScreenedLabel">People Screened</p>
+              </div>
+            </div>
+
+            <div class="stat-tile">
+              <div class="stat-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>
+              </div>
+              <div class="stat-numbers">
+                <h4 data-i18n="statCamps">50+</h4>
+                <p data-i18n="statCampsLabel">Camps & Centres</p>
+              </div>
+            </div>
+
+            <div class="stat-tile">
+              <div class="stat-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              </div>
+              <div class="stat-numbers">
+                <h4 data-i18n="statAccuracy">95%</h4>
+                <p data-i18n="statAccuracyLabel">Early Detection Rate*</p>
+              </div>
+            </div>
+
+            <div class="stat-tile">
+              <div class="stat-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                </svg>
+              </div>
+              <div class="stat-numbers">
+                <h4 data-i18n="statCommunities">Better</h4>
+                <p data-i18n="statCommunitiesLabel">Communities</p>
+              </div>
+            </div>
+          </div>
+          <p class="stat-footnote" data-i18n="statFootnote">*Based on pilot program data</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CALL TO ACTION BANNER -->
+    <section class="cta-banner-section">
+      <div class="cta-banner-card">
+        <!-- SVG Watermark -->
+        <svg class="cta-banner-bg-art" viewBox="0 0 200 200" fill="currentColor">
+          <path d="M100 0C44.8 0 0 44.8 0 100s44.8 100 100 100 100-44.8 100-100S155.2 0 100 0zm0 170c-38.7 0-70-31.3-70-70s31.3-70 70-70 70 31.3 70 70-31.3 70-70 70z"/>
+        </svg>
+
+        <div class="cta-banner-top">
+          <div class="cta-banner-text">
+            <h2 data-i18n="ctaBannerTitle">Your Eyes Matter. Let’s Build a Healthier Tomorrow.</h2>
+            <p data-i18n="ctaBannerDesc">Join Netra today and take the first step towards clearer vision.</p>
+          </div>
+          <a href="login.html" class="btn-cta-white">
+            <span data-i18n="ctaBannerBtn">Get Started</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="5" y1="12" x2="19" y2="12"/>
+              <polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </a>
+        </div>
+
+        <div class="cta-badges-row">
+          <div class="cta-badge-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            <span data-i18n="badgeAccessible">Accessible</span>
+          </div>
+
+          <div class="cta-badge-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="5" width="20" height="14" rx="2"/>
+              <line x1="2" y1="10" x2="22" y2="10"/>
+            </svg>
+            <span data-i18n="badgeAffordable">Affordable</span>
+          </div>
+
+          <div class="cta-badge-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+            <span data-i18n="badgeIndia">For a Healthier India</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="landing-footer" id="contact">
+      <div class="footer-container">
+        <div class="footer-grid">
+          <!-- Col 1: Brand -->
+          <div class="footer-col">
+            <div class="brand-logo" style="margin-bottom: 12px;">
+              <svg class="logo-eye-icon" viewBox="0 0 48 48" fill="none" style="width: 38px; height: 38px;">
+                <circle cx="24" cy="24" r="22" stroke="currentColor" stroke-width="2.5"/>
+                <circle cx="24" cy="24" r="14" stroke="currentColor" stroke-width="2"/>
+                <circle cx="24" cy="24" r="7" fill="currentColor"/>
+              </svg>
+              <div class="brand-text">
+                <span class="brand-name" style="font-size: 1.25rem;">Netra</span>
+                <span class="brand-tagline">Clearer Vision, Healthier Tomorrow</span>
+              </div>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;" data-i18n="footerMission">
+              Empowering healthier lives through early detection and accessible eye care.
+            </p>
+            <div class="footer-social-links">
+              <a href="#" class="social-btn" aria-label="Facebook">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+              </a>
+              <a href="#" class="social-btn" aria-label="Instagram">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+              </a>
+              <a href="#" class="social-btn" aria-label="YouTube">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" fill="#fff"/></svg>
+              </a>
+              <a href="#" class="social-btn" aria-label="LinkedIn">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Col 2: Quick Links -->
+          <div class="footer-col" id="resources">
+            <h4 data-i18n="footerQuickLinks">Quick Links</h4>
+            <ul>
+              <li><a href="#home" data-i18n="navHome">Home</a></li>
+              <li><a href="#about" data-i18n="navAbout">About</a></li>
+              <li><a href="#for-patients" data-i18n="navForPatients">For Patients</a></li>
+              <li><a href="login.html" data-i18n="navSignIn">Sign In</a></li>
+            </ul>
+          </div>
+
+          <!-- Col 3: Support -->
+          <div class="footer-col">
+            <h4 data-i18n="footerSupport">Support</h4>
+            <ul>
+              <li><a href="#" data-i18n="footerFaq">FAQs</a></li>
+              <li><a href="#" data-i18n="footerPrivacy">Privacy Policy</a></li>
+              <li><a href="#" data-i18n="footerTerms">Terms of Use</a></li>
+              <li><a href="#" data-i18n="footerHelp">Help & Support</a></li>
+            </ul>
+          </div>
+
+          <!-- Col 4: Download App -->
+          <div class="footer-col">
+            <h4 data-i18n="footerDownloadApp">Download Our App</h4>
+            <div class="app-badges">
+              <div class="app-store-btn">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.609 1.814L13.792 12 3.61 22.186a1.99 1.99 0 0 1-.61-.715L3 21.46V2.54l.001-.012c.08-.29.288-.535.608-.714zM15.207 13.414l2.766 2.765-12.012 6.945 9.246-9.71zm0-2.828L5.961.876l12.012 6.945-2.766 2.765zm1.414 1.414l3.864-2.233c.963-.556.963-1.464 0-2.02l-3.864-2.233-2.121 2.122 2.121 2.122z"/></svg>
+                <div>
+                  <small style="font-size: 0.65rem; opacity: 0.8; display: block;">GET IT ON</small>
+                  <strong>Google Play</strong>
+                </div>
+              </div>
+
+              <div class="app-store-btn">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.62-.75 1.04-1.8 0.93-2.85-.9.04-1.99.6-2.63 1.35-.57.65-1.06 1.71-.93 2.73 1.01.08 2.02-.48 2.63-1.23z"/></svg>
+                <div>
+                  <small style="font-size: 0.65rem; opacity: 0.8; display: block;">Download on the</small>
+                  <strong>App Store</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Col 5: India Initiative -->
+          <div class="footer-col">
+            <div class="india-initiative-box">
+              <div class="initiative-title">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-9l6 4.5-6 4.5z"/>
+                </svg>
+                <span data-i18n="footerAspiration">A step towards a clearer vision for a brighter India.</span>
+              </div>
+              <p class="made-for-india">
+                <strong data-i18n="footerMadeForIndia">Made for India</strong><br>
+                <span data-i18n="footerLanguages">Available in English | हिंदी | ಕನ್ನಡ</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <span data-i18n="footerCopyright">© 2026 Netra. All rights reserved.</span>
+          <span data-i18n="footerMotto">Clearer Vision. Healthier Lives.</span>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <!-- Application Logic & Translations -->
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/translations.js"></script>
+  <script src="js/netra-bridge.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

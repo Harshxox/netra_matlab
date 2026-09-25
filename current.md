@@ -20,13 +20,18 @@ Update this file as features complete. Check boxes as you go.
 | MATLAB | M-1 Preprocessing | ✅ Done — 12/12 real APTOS images gradable; blur/dark/partial-frame correctly downgraded; thresholds tuned 2026-09-09 |
 | MATLAB | M-2 Grading inference | 🔄 Rules grader done + ONNX ResNet-50 path ready. Eval on 28 labelled APTOS: QWK 0.43, referable sens 53% / spec 100%, within-1 75%. Classical tops out here — **90% sensitivity target NEEDS dr_grader.onnx from Colab.** |
 | MATLAB | M-3 Segmentation inference | 🔄 Classical path done (morphology: vessels, OD, MA/HE/EX + overlay). Value = explainability overlay + offline fallback, not benchmark accuracy. ONNX U-Net path stubbed. |
-| MATLAB | M-4 Explainability | ✅ Heatmap (lesion-evidence now, real Grad-CAM when ONNX arrives) + evidence view + one-page-ish PDF report. All generate. Healthy→clean heatmap, severe→lit. |
-| MATLAB | M-5 Data layer | ✅ .mat table: saveScreening / getHistory (trend string) / saveReviewDecision / dbStats. Persists across sessions. |
+| MATLAB | M-4 Explainability | ✅ **Occlusion-sensitivity attention map** (decisionInfluenceMap.m — model-agnostic Grad-CAM analogue on the classical grader; real Grad-CAM auto-swaps in with ONNX) + **XAI agreement check** (xaiAgreement.m — attention vs detected lesions) + **calibrated confidence** (buildCalibration.m Platt fit on 28 APTOS: ECE 0.176→0.097, applyCalibration in pipeline) + evidence view + redesigned colour-coded PDF report. Dashboard shows attention-method / attention-lesion-agreement / calibration chips + calibrated gauges. |
+| MATLAB | M-5 Data layer | ✅ **Screenings**: netra_db.mat (saveScreening/getHistory/saveReviewDecision/dbStats). **Patient registry**: netra_patients.mat (initPatientDB/registerPatient/getPatient/findPatients). **Auth**: checkAuth (admin/operator, prototype creds). **Admin**: adminSnapshot (stats+patient list+villages+recent), patientDossier (profile+full screening history). All persist across sessions, all JSON-serializable. |
 | MATLAB | M-6 Simulink | ✅ `simulink/netra_telemedicine.slx` (7-block SimEvents model + 2 scopes, simulates clean) built by `buildTelemedicineModel.m`, run by `simulateTelemedicine.m`. Rigorous numbers from `queueSim.m`/`runSimulation.m`: district (100k/yr) needs **3 ophthalmologists** for p95 wait <24h; bandwidth 2 vs 50 Mbps barely matters. |
-| MATLAB | M-7 Frontend | ✅ NetraApp.m (uifigure+uihtml, no App Designer) + dashboard.html/css/js. Renders correctly for gradable + ungradable (screenshots in images/_debug/). Agree/Override/Open-PDF wired. Images sent as base64 data URIs. |
+| MATLAB | M-7 Frontend | ✅ NetraApp.m (login→register/screen→admin) + BioTrack-style single-file dashboard.html/css/js. White+emerald-green palette. Login (role-aware) · Register/find patient · Screening (3D-tilted floating fundus hero w/ severity glow, 58px headline, top-right vitals, tick-arc gauges, XAI strip, Low→Detected←High findings table) · Admin district console (stat tiles + patient table + dossier drawer). Pinched floating sidebar, green accent bars, layered depth shadows. Pipeline logic unchanged. |
 | MATLAB | M-8 Integration | 🔄 runPipeline.m end-to-end (~9s cold / 3s warm). Ungradable early-exit + 5 error cases handled (test_errors). APTOS eval (evalGrading): QWK 0.44, sens 59%/spec 100% (rules). validateMessidor2.m built + wiring-tested (parses Kaggle/Google/ADCIS CSV formats, parfor, subset limit) — needs the dataset downloaded to data/messidor2/. PPT + real Messidor-2 run + demo pending. |
 
 **Status key:** ⬜ Not started · 🔄 In progress · ✅ Done · 🔴 Blocked
+
+> **App**: `NetraApp` — login (phc/phc2026, doctor/doctor2026, admin/netra2026)
+> → operator registers/finds a patient → screening dashboard → admin district
+> console. Data: `netra_patients.mat` + `netra_db.mat` (persist across sessions).
+> `seedDemoPatients` for the demo cohort. 8 headless test suites pass.
 
 ---
 
@@ -35,9 +40,9 @@ These files go from Colab → Google Drive → MATLAB team. This is the critical
 
 | File | Produced in | Needed by | Uploaded | MATLAB imported |
 |---|---|---|---|---|
-| `dr_grader.onnx` | C-2 | M-2 | ⬜ | ⬜ |
-| `referable_threshold.txt` | C-2 | M-2 | ⬜ | ⬜ |
-| `temperature.mat` | C-2 | M-4 | ⬜ | ⬜ |
+| `dr_grader.onnx` | C-2 | M-2 | ⚠️ v1 (2026-09-10) | 🔴 **won't import** — external-data weights + IR 10; needs re-export self-contained |
+| `referable_threshold.txt` | C-2 | M-2 | ✅ 0.327 | ✅ staged, auto-loads |
+| `temperature.mat` | C-2 | M-4 | ⬜ (not provided) | ⬜ code defaults T=1 |
 | `vessel_unet.onnx` | C-3 | M-3 | ⬜ | ⬜ |
 | `ma_unet.onnx` | C-4 | M-3 | ⬜ | ⬜ |
 | `he_unet.onnx` | C-4 | M-3 | ⬜ | ⬜ |

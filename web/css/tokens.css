@@ -1,0 +1,160 @@
+/**
+ * Netra Design System — Adaptive Color Tokens & Clinical Semantics
+ * Implements WCAG 2.1 AAA contrast targets & Astigmatism (Halation Control)
+ */
+
+:root {
+  /* Adaptive Color Tokens — Light Mode */
+  --bg-main: #F4F6F9;          /* Soft Light Gray — primary application background */
+  --bg-surface: #FFFFFF;       /* Pure White — cards, patient charts, data tables */
+  --bg-surface-subtle: #F8FAFC;
+  --bg-surface-hover: #F1F5F9;
+  --border-subtle: #E2E8F0;
+  --border-card: #E5E9F0;
+
+  --brand-primary: #007A87;    /* Deep Teal — primary buttons, active navigation, key branding */
+  --brand-primary-hover: #00636E;
+  --brand-primary-light: #E6F4F6;
+  --brand-primary-rgb: 0, 122, 135;
+
+  --brand-secondary: #1A2B4C;  /* Midnight Navy — global navigation borders, headers */
+  --brand-secondary-light: #EBF1F8;
+
+  --text-primary: #1A2530;     /* Charcoal — high-readability body text, patient names */
+  --text-secondary: #627289;   /* Muted Slate — table headers, secondary metadata */
+  --text-tertiary: #8A9BA8;
+  --text-inverse: #FFFFFF;
+
+  --accent-action: #D97706;    /* Soft Amber — reminders, appointments, alerts */
+  --accent-action-hover: #B45309;
+  --accent-action-bg: #FEF3C7;
+
+  /* Clinical Semantic Tokens — Light Mode */
+  --status-normal: #16A34A;     /* Sage Green — IOP 12-21 mmHg, stable acuity */
+  --status-normal-bg: #DCFCE7;
+  --status-normal-border: #86EFAC;
+  --status-normal-text: #14532D;
+
+  --status-warning: #D97706;    /* Warm Ochre — borderline IOP, minor visual field deviations */
+  --status-warning-bg: #FEF3C7;
+  --status-warning-border: #FCD34D;
+  --status-warning-text: #78350F;
+
+  --status-critical: #DC2626;   /* Subdued Crimson — IOP >25 mmHg, urgent follow-up */
+  --status-critical-bg: #FEE2E2;
+  --status-critical-border: #FCA5A5;
+  --status-critical-text: #7F1D1D;
+
+  /* Typography & Shadows */
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans Devanagari', 'Noto Sans Kannada', sans-serif;
+  --font-family-serif: 'Playfair Display', Georgia, serif;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.07), 0 4px 8px rgba(0, 0, 0, 0.04);
+  --shadow-glow: 0 0 20px rgba(0, 122, 135, 0.15);
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Exam Room (Dark) Mode */
+[data-theme="dark"] {
+  --bg-main: #0F141C;          /* Deep Onyx — eliminates screen glare during ophthalmic exams */
+  --bg-surface: #18202C;       /* Deep Navy-Slate — dashboard cards & charts */
+  --bg-surface-subtle: #1C2635;
+  --bg-surface-hover: #222E40;
+  --border-subtle: #2A384C;
+  --border-card: #273447;
+
+  --brand-primary: #00B4D8;    /* Bright Optic Teal — high contrast against dark onyx */
+  --brand-primary-hover: #38BDF8;
+  --brand-primary-light: rgba(0, 180, 216, 0.15);
+  --brand-primary-rgb: 0, 180, 216;
+
+  --brand-secondary: #E2E8F0;  /* Soft Light Gray — structural navigation lines */
+  --brand-secondary-light: #243042;
+
+  --text-primary: #F8FAFC;     /* Off-White — high readability, anti-halation */
+  --text-secondary: #94A3B8;   /* Cool Muted Gray — metadata & table headers */
+  --text-tertiary: #64748B;
+  --text-inverse: #0F141C;
+
+  --accent-action: #F59E0B;    /* Vibrant Amber — alerts & upcoming appointments */
+  --accent-action-hover: #FBBF24;
+  --accent-action-bg: rgba(245, 158, 11, 0.18);
+
+  /* Clinical Semantic Tokens — Dark Mode */
+  --status-normal: #4ADE80;     /* Calibrated Green */
+  --status-normal-bg: rgba(74, 222, 128, 0.16);
+  --status-normal-border: rgba(74, 222, 128, 0.35);
+  --status-normal-text: #86EFAC;
+
+  --status-warning: #FBBF24;    /* Calibrated Ochre */
+  --status-warning-bg: rgba(251, 191, 36, 0.16);
+  --status-warning-border: rgba(251, 191, 36, 0.35);
+  --status-warning-text: #FDE68A;
+
+  --status-critical: #F87171;   /* Calibrated Crimson */
+  --status-critical-bg: rgba(248, 113, 113, 0.16);
+  --status-critical-border: rgba(248, 113, 113, 0.35);
+  --status-critical-text: #FECACA;
+
+  /* Astigmatism (Halation Control) Typography Enforcement */
+  /* Ensures no thin font weight (minimum 500) against dark onyx to prevent optical blur */
+  --font-weight-normal: 500;
+  --font-weight-medium: 600;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 24px rgba(0, 180, 216, 0.25);
+}
+
+/* Astigmatism Halation Protection Rules */
+[data-theme="dark"] body,
+[data-theme="dark"] p,
+[data-theme="dark"] span,
+[data-theme="dark"] input,
+[data-theme="dark"] button {
+  font-weight: 500 !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-shadow: 0 0 1px rgba(0,0,0,0.1);
+}
+
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4,
+[data-theme="dark"] strong,
+[data-theme="dark"] .font-semibold {
+  font-weight: 600 !important;
+}
+
+/* WCAG AAA Diagnostic Contrast Target (7:1) */
+.clinical-data-metric {
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.01em;
+}
+
+[data-theme="light"] .clinical-data-metric {
+  color: #0B192C; /* High contrast black/navy */
+}
+
+[data-theme="dark"] .clinical-data-metric {
+  color: #FFFFFF; /* High contrast pure white against dark surfaces */
+}

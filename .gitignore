@@ -19,3 +19,12 @@ resources/project/*.info.xml
 # --- OS ---
 .DS_Store
 Thumbs.db
+
+# --- Web deploy ---
+.vercel
+/web/uploads/
+
+# web/data/ IS committed on purpose: it holds the pre-computed pipeline
+# snapshot the hosted site falls back to when the MATLAB backend is offline.
+!/web/data/
+!/web/data/**

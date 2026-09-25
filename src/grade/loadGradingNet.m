@@ -34,9 +34,13 @@ function [net, info] = loadGradingNet(modelPath)
         try
             n = importONNXNetwork(modelPath, 'OutputLayerType', 'classification');
         catch e2
-            error('loadGradingNet:importFailed', ...
-                'dr_grader.onnx exists but will not import:\n  %s\n  %s', ...
-                e1.message, e2.message);
+            % Broken/unsupported ONNX must NOT crash the pipeline - degrade to
+            % the rules grader, but warn loudly so the problem is visible.
+            info.message = sprintf(['dr_grader.onnx present but will not import ' ...
+                '- using the rules-based grader.\n  %s'], e1.message);
+            warning('loadGradingNet:importFailed', '%s', info.message);
+            cachedNet = []; cachedInfo = info; net = [];
+            return
         end
     end
 

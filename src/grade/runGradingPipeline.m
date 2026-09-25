@@ -27,6 +27,7 @@ function resultBlock = runGradingPipeline(processedImg, lesionsBlock, opts)
             [referable, ~] = isReferable(probs, grade);
             resultBlock = buildResultBlock(grade, probs, referable, 'onnx', ...
                 {sprintf('ResNet-50 grader: P(grade %d)=%.0f%%', grade, 100*max(probs))});
+            resultBlock = addCalibration(resultBlock, probs);
             return
         catch e
             warning('runGradingPipeline:onnxFailed', ...
@@ -38,4 +39,20 @@ function resultBlock = runGradingPipeline(processedImg, lesionsBlock, opts)
     [grade, probs, notes] = gradeFromRules(lesionsBlock);
     [referable, ~] = isReferable(probs, grade);
     resultBlock = buildResultBlock(grade, probs, referable, 'rules', notes);
+    resultBlock = addCalibration(resultBlock, probs);
+end
+
+% --------------------------------------------------------------------
+function rb = addCalibration(rb, probs)
+%ADDCALIBRATION  Replace the heuristic confidence with a calibrated one.
+    pRefRaw = sum(probs(3:5));
+    [pRefCal, conf, calInfo] = applyCalibration(pRefRaw);
+
+    rb.confidenceRaw = rb.confidence;          % keep the heuristic value
+    rb.pReferableRaw = pRefRaw;
+    rb.pReferable    = pRefCal;                % calibrated P(grade >= 2)
+    rb.calibration   = calInfo;               % .available .method .ece .n
+    if calInfo.available
+        rb.confidence = conf;                  % calibrated decision confidence
+    end
 end

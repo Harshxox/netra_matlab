@@ -100,10 +100,12 @@ function record = runPipeline(imagePath, patientId, eye, opts)
     % ---- M-4 explainability + report -----------------------
     [ip, reportPath] = runExplainPipeline(proc, record, masks, struct( ...
         'saveDir', opts.saveDir, 'makePdf', opts.makePdf, ...
-        'gradingNet', gnet, 'gradingInfo', ginfo));
+        'gradingNet', gnet, 'gradingInfo', ginfo, ...
+        'lesionsBlock', lBlock, 'fovMask', fovMask));
     record.images.gradcam  = ip.gradcam;
     record.images.evidence = ip.evidence;
     record.images.reportPath = reportPath;
+    record.explain         = ip.explain;
     record.meta.heatMethod = ip.heatMethod;
 
     % ---- M-5 history ---------------------------------------
@@ -128,6 +130,7 @@ function r = emptyRecord()
     r.images  = struct('original','','enhanced','','gradcam','','lesionOverlay','', ...
                        'vesselMap','','evidence','','reportPath','');
     r.history = struct('priorGrades',[],'trend','');
+    r.explain = [];
     r.routing = 'routine_followup';
     r.review  = struct('status','pending','finalGrade',[],'notes','','reviewerId','','timestamp','');
     r.clinical = [];

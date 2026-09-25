@@ -27,18 +27,20 @@ function [grade, probs, notes] = gradeFromRules(lesions)
     % healthy retina). Subtract it so grade 0/1 images are not over-referred.
     % Applied ONLY for the classical detector - trained-model / raw counts pass
     % through untouched (lesions.method ~= 'classical').
+    rawMA = fieldOr(lesions,'maCount',0);
+    rawHE = fieldOr(lesions,'heCount',0);
+
     isClassical = isfield(lesions,'method') && strcmpi(lesions.method,'classical');
     MA_FLOOR = 8*isClassical;   HE_FLOOR = 3*isClassical;
-    ma = max(0, lesions.maCount - MA_FLOOR);
-    he = max(0, lesions.heCount - HE_FLOOR);
-    ex = lesions.exudateAreaPct;
+    ma = max(0, rawMA - MA_FLOOR);
+    he = max(0, rawHE - HE_FLOOR);
+    ex = fieldOr(lesions,'exudateAreaPct',0);
     HE_MOD = 1 + 2*isClassical;      % moderate: he_eff >= 1 (raw) or >= 3 (classical)
     MA_MOD = 15 + 2*isClassical;
     HE_SEV = 25 + 15*isClassical;    % severe:   he_eff >= 25 (raw) or >= 40 (classical)
     MA_SEV = 60 + 25*isClassical;
-    nv = isfield(lesions,'nvPresent') && lesions.nvPresent;
-    q  = zeros(1,4);
-    if isfield(lesions,'maByQuadrant'); q = lesions.maByQuadrant; end
+    nv = logical(fieldOr(lesions,'nvPresent',false));
+    q  = fieldOr(lesions,'maByQuadrant',[0 0 0 0]);
     quadrantsWithManyMA = nnz(q >= 10);
 
     notes = {};
@@ -49,17 +51,17 @@ function [grade, probs, notes] = gradeFromRules(lesions)
     elseif (he >= HE_MOD && quadrantsWithManyMA >= 3) || he >= HE_SEV || ma >= MA_SEV
         grade = 3;
         notes{end+1} = sprintf('Heavy lesion load (MA=%d, HE=%d across %d quadrants) -> Severe', ...
-                               lesions.maCount, lesions.heCount, quadrantsWithManyMA);
+                               rawMA, rawHE, quadrantsWithManyMA);
     elseif he >= HE_MOD || ex >= 0.6 || ma >= MA_MOD
         grade = 2;
         r = {};
-        if he >= HE_MOD; r{end+1} = sprintf('%d hemorrhages', lesions.heCount); end
+        if he >= HE_MOD; r{end+1} = sprintf('%d hemorrhages', rawHE); end
         if ex >= 0.6;    r{end+1} = sprintf('exudates (%.2f%% area)', ex); end
-        if ma >= MA_MOD; r{end+1} = sprintf('%d microaneurysms', lesions.maCount); end
+        if ma >= MA_MOD; r{end+1} = sprintf('%d microaneurysms', rawMA); end
         notes{end+1} = ['More than microaneurysms alone: ' strjoin(r, ', ') ' -> Moderate'];
-    elseif ma >= 1 || lesions.maCount >= 3
+    elseif ma >= 1 || rawMA >= 3
         grade = 1;
-        notes{end+1} = sprintf('%d microaneurysm(s), no significant hemorrhage -> Mild', lesions.maCount);
+        notes{end+1} = sprintf('%d microaneurysm(s), no significant hemorrhage -> Mild', rawMA);
     else
         grade = 0;
         notes{end+1} = 'No significant lesions detected -> No DR';
@@ -69,4 +71,8 @@ function [grade, probs, notes] = gradeFromRules(lesions)
     d = abs((0:4) - grade);
     probs = exp(-1.1 * d);
     probs = probs / sum(probs);
+end
+
+function v = fieldOr(s, f, d)
+    if isstruct(s) && isfield(s,f) && ~isempty(s.(f)); v = s.(f); else; v = d; end
 end

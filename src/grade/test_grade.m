@@ -41,11 +41,18 @@ function test_grade()
     % --- 3. ONNX path, only if the model file exists -----------------
     if isfile(fullfile('models','dr_grader.onnx'))
         fprintf('\n  dr_grader.onnx present - testing ONNX path:\n');
-        [proc,~,~,~] = runQualityPipeline(fullfile(files(1).folder, files(1).name));
-        r = runGradingPipeline(proc, struct(), struct('forceRules',false));
+        [proc,~,~,fov] = runQualityPipeline(fullfile(files(1).folder, files(1).name));
+        [lb,~,~] = runSegmentationPipeline(proc,'TEST',fov);
+        [net, info] = loadGradingNet();
+        r = runGradingPipeline(proc, lb, struct('forceRules',false));
         fprintf('    grade %d (%s) conf=%.0f%% method=%s\n', ...
             r.grade, r.gradeLabel, 100*r.confidence, r.method);
-        assert(strcmp(r.method,'onnx'), 'expected ONNX path to be used');
+        if info.available
+            assert(strcmp(r.method,'onnx'), 'ONNX imported but rules path was used');
+        else
+            fprintf('    (ONNX present but did not import - graceful fallback to rules OK)\n');
+            assert(strcmp(r.method,'rules'), 'broken ONNX should fall back to rules');
+        end
     else
         fprintf('\n  (dr_grader.onnx not present - ONNX path not tested)\n');
     end

@@ -2,99 +2,300 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Netra - DR Screening</title>
+  <title>Netra - Retinal Screening</title>
   <link rel="stylesheet" href="dashboard.css">
 </head>
 <body>
-  <header id="topbar">
-    <span class="brand">Netra</span>
-    <span id="patientId">--</span>
-    <span class="eye-toggle">
-      <button id="eyeOD" class="eye active" data-eye="OD">OD</button>
-      <button id="eyeOS" class="eye"        data-eye="OS">OS</button>
-    </span>
-    <span id="qualityChip" class="chip">--</span>
-    <span class="spacer"></span>
-    <span id="reviewTimer">0:30</span>
-  </header>
 
-  <main id="content">
-    <!-- image viewer -->
-    <section id="image-panel">
-      <img id="fundusImg" alt="fundus">
-      <div id="layer-toggles">
-        <button class="layer active" data-layer="evidence">Evidence</button>
-        <button class="layer" data-layer="gradcam">Heatmap</button>
-        <button class="layer" data-layer="lesionOverlay">Lesions</button>
-        <button class="layer" data-layer="vesselMap">Vessels</button>
-        <button class="layer" data-layer="enhanced">Enhanced</button>
-        <button class="layer" data-layer="original">Original</button>
+<!-- ============================= LOGIN ============================= -->
+<div id="loginView">
+
+  <aside class="lg-brand">
+    <div class="lg-brand-noise"></div>
+    <div class="lg-brand-top">
+      <div class="lg-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
       </div>
-    </section>
+      <span class="lg-tag-ps">SIH 2026 &nbsp;·&nbsp; PS 26038</span>
+    </div>
 
-    <!-- results -->
-    <aside id="results-panel">
-      <div id="verdict" class="verdict">--</div>
+    <div class="lg-brand-mid">
+      <svg class="lg-eye" viewBox="0 0 220 220" fill="none">
+        <defs>
+          <radialGradient id="lgIris" cx="42%" cy="38%" r="65%">
+            <stop offset="0%" stop-color="#a7f3d0"/><stop offset="42%" stop-color="#34d399"/>
+            <stop offset="78%" stop-color="#059669"/><stop offset="100%" stop-color="#065f46"/>
+          </radialGradient>
+          <radialGradient id="lgHalo" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#ffffff" stop-opacity=".55"/><stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <circle cx="110" cy="110" r="104" fill="url(#lgHalo)"/>
+        <ellipse cx="110" cy="110" rx="100" ry="66" fill="#ffffff" fill-opacity=".14"/>
+        <ellipse cx="110" cy="110" rx="100" ry="66" stroke="#ffffff" stroke-opacity=".35" stroke-width="2"/>
+        <circle cx="110" cy="110" r="52" fill="url(#lgIris)"/>
+        <circle cx="110" cy="110" r="52" stroke="#ffffff" stroke-opacity=".4" stroke-width="1.5"/>
+        <circle cx="110" cy="110" r="23" fill="#04140e"/>
+        <circle cx="97" cy="98" r="9" fill="#ffffff" fill-opacity=".9"/>
+        <circle cx="124" cy="122" r="4" fill="#ffffff" fill-opacity=".5"/>
+        <g stroke="#04140e" stroke-opacity=".25" stroke-width="2" stroke-linecap="round" fill="none">
+          <path d="M110 58v14M110 148v14M58 110h14M148 110h14M74 74l10 10M146 146l-10-10M146 74l-10 10M74 146l10-10"/>
+        </g>
+      </svg>
+      <h1>Netra</h1>
+      <p class="lg-mission">Explainable AI that triages diabetic eye disease at the primary health centre &mdash; and shows the ophthalmologist exactly why.</p>
+      <div class="lg-stats">
+        <div><b>77M</b><span>diabetics at risk in India</span></div>
+        <div><b>&lt;30s</b><span>to review a case</span></div>
+        <div><b>0&ndash;4</b><span>ICDR severity grades</span></div>
+      </div>
+    </div>
 
-      <div class="block">
-        <div class="label">DR Grade</div>
-        <div id="grade-pips">
-          <span class="pip" data-g="0">0</span>
-          <span class="pip" data-g="1">1</span>
-          <span class="pip" data-g="2">2</span>
-          <span class="pip" data-g="3">3</span>
-          <span class="pip" data-g="4">4</span>
+    <div class="lg-brand-foot">Prototype for research and demonstration. Not a certified medical device.</div>
+  </aside>
+
+  <main class="lg-form">
+    <div class="lg-form-inner">
+      <h2>Welcome back</h2>
+      <p class="lg-sub">Sign in to register patients, run screenings, or open the district console.</p>
+
+      <label class="lg-field">
+        <span>Username</span>
+        <div class="lg-input">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>
+          <input id="loginUser" type="text" autocomplete="username" placeholder="phc, doctor or admin">
         </div>
-        <div id="gradeLabel" class="sub">--</div>
-      </div>
+      </label>
 
-      <div class="block">
-        <div class="label">Confidence <span id="confPct">--</span></div>
-        <div class="bar"><div id="confFill"></div></div>
-        <div id="method" class="sub"></div>
-      </div>
+      <label class="lg-field">
+        <span>Password</span>
+        <div class="lg-input">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+          <input id="loginPass" type="password" autocomplete="current-password" placeholder="Enter your password">
+        </div>
+      </label>
 
-      <div class="block">
-        <div class="label">Why this grade</div>
-        <ul id="whyList"></ul>
-      </div>
+      <div class="login-err" id="loginErr" hidden></div>
 
-      <div class="block">
-        <div class="label">Lesions</div>
-        <table id="lesionTable">
-          <tr><td>Microaneurysms</td><td id="lesMA">--</td></tr>
-          <tr><td>Hemorrhages</td><td id="lesHE">--</td></tr>
-          <tr><td>Exudate area</td><td id="lesEX">--</td></tr>
-          <tr><td>Neovascularization</td><td id="lesNV">--</td></tr>
-        </table>
-      </div>
+      <button class="btn primary lg" id="loginBtn">
+        Sign in
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </button>
 
-      <div class="block" id="historyBlock">
-        <div class="label">History</div>
-        <div id="historyTrend" class="sub">--</div>
+      <div class="lg-demo">
+        <b>Demo accounts</b>
+        <div class="lg-demo-rows">
+          <span><i>phc</i>phc2026</span>
+          <span><i>doctor</i>doctor2026</span>
+          <span><i>admin</i>netra2026</span>
+        </div>
       </div>
-    </aside>
+    </div>
   </main>
+</div>
 
-  <footer id="action-bar">
-    <button id="btnAgree"  class="act agree">&#10003; Agree</button>
-    <button id="btnOverride" class="act override">&#9998; Override</button>
-    <span id="overridePanel" hidden>
-      <select id="overrideGrade">
-        <option value="0">0 - No DR</option>
-        <option value="1">1 - Mild</option>
-        <option value="2">2 - Moderate</option>
-        <option value="3">3 - Severe</option>
-        <option value="4">4 - Proliferative</option>
-      </select>
-      <input id="overrideNotes" type="text" placeholder="Notes...">
-      <button id="btnOverrideSave" class="act agree">Save</button>
-    </span>
-    <span class="spacer"></span>
-    <span id="statusMsg"></span>
-    <button id="btnPdf" class="act pdf">&#8681; Open PDF</button>
-  </footer>
+<!-- ============================= APP SHELL ============================= -->
+<div id="shell" hidden>
 
-  <script src="dashboard.js"></script>
+  <nav id="sidebar">
+    <div class="logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+    </div>
+    <div class="nav" id="sideNav">
+      <button data-nav="screen" class="active" title="Screening"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12 12 3l9 9M5 10v10h14V10"/></svg></button>
+      <button data-nav="admin" title="District console"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18M7 14l4-4 4 4 5-6"/></svg></button>
+      <button data-nav="patients" title="Patients"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5M17 11l2 2 4-4"/></svg></button>
+    </div>
+    <div class="foot">
+      <button id="logoutBtn" title="Sign out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></button>
+    </div>
+  </nav>
+
+  <div id="main">
+
+    <header>
+      <div id="patientCtx" class="patient-ctx" hidden></div>
+      <div class="search" id="hdrSearch" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--ink-3)" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="patientSearch" type="text" placeholder="Patient ID or name">
+      </div>
+      <div class="eye-seg" id="eyeSeg" hidden>
+        <button data-eye="OD" class="active">OD</button>
+        <button data-eye="OS">OS</button>
+      </div>
+      <span id="qualityChip" class="chip" hidden><i class="dot"></i><span>--</span></span>
+
+      <span class="spacer"></span>
+
+      <div class="user">
+        <div class="av" id="userAv">--</div>
+        <div class="who"><b id="userName">--</b><span id="userRole">--</span></div>
+      </div>
+    </header>
+
+    <div id="body">
+
+      <!-- ---------- REGISTER / SELECT PATIENT ---------- -->
+      <section id="register">
+        <h1 class="rv-title">Screen a patient</h1>
+        <p class="rv-sub">Find an existing patient, or register a new one to begin.</p>
+
+        <div class="rv-grid">
+          <div class="rv-panel">
+            <div class="rv-panel-t">Find existing patient</div>
+            <div class="search big">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--ink-3)" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+              <input id="findInput" type="text" placeholder="Name, ID or phone">
+            </div>
+            <div class="rv-results" id="findResults"><div class="rv-empty">Start typing to search the registry.</div></div>
+          </div>
+
+          <div class="rv-panel">
+            <div class="rv-panel-t">Register new patient</div>
+            <div class="rv-form">
+              <label class="f-wide">Full name<input id="rgName" type="text" placeholder="e.g. Ramesh Kumar"></label>
+              <label>Age<input id="rgAge" type="number" min="0" max="120" placeholder="years"></label>
+              <label>Sex
+                <select id="rgSex"><option value="">--</option><option>M</option><option>F</option><option>Other</option></select>
+              </label>
+              <label>Phone<input id="rgPhone" type="text" placeholder="10-digit"></label>
+              <label>Village / PHC<input id="rgVillage" type="text" placeholder="e.g. Rampur PHC"></label>
+              <label>Years with diabetes<input id="rgDm" type="number" min="0" max="60" placeholder="years"></label>
+              <label class="f-wide">Notes<input id="rgNotes" type="text" placeholder="hypertension, prior eye disease, ..."></label>
+            </div>
+            <button class="btn primary lg" id="rgSubmit">Register &amp; start screening</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- SCREENING: landing / loading / dash ---------- -->
+      <section id="landing" hidden>
+        <div class="hero">
+          <div class="hero-visual">
+            <svg class="eyeArt" viewBox="0 0 200 200" fill="none">
+              <defs>
+                <radialGradient id="iris" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#34d399"/><stop offset="55%" stop-color="#10b981"/><stop offset="100%" stop-color="#047857"/></radialGradient>
+                <radialGradient id="glow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#f59e0b" stop-opacity=".85"/><stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/></radialGradient>
+              </defs>
+              <circle cx="100" cy="100" r="92" fill="#e7f6ef"/><circle cx="100" cy="100" r="92" stroke="#cdeede" stroke-width="2"/>
+              <circle cx="128" cy="92" r="20" fill="url(#glow)"/>
+              <circle cx="100" cy="100" r="46" fill="url(#iris)"/><circle cx="100" cy="100" r="20" fill="#0b1226"/>
+              <circle cx="92" cy="92" r="7" fill="#fff" opacity=".9"/>
+              <g stroke="#c02942" stroke-width="2.2" stroke-linecap="round" opacity=".8" fill="none">
+                <path d="M128 92c8 6 14 16 16 30M128 92c10-2 22 2 30 12M128 92c2-10 10-20 22-24M128 92c-6-8-8-20-4-32M128 92c-12 4-26 2-36-6M128 92c-4 12-14 22-28 26"/>
+              </g>
+              <circle cx="128" cy="92" r="5" fill="#ffd27a"/>
+            </svg>
+          </div>
+          <div class="hero-copy">
+            <h1>Ready to<br><em>screen</em></h1>
+            <p class="tag" id="landingPatient">Patient loaded. Capture or upload the fundus photograph to run the pipeline.</p>
+            <button class="cta" id="ctaOpen">Open fundus image
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="features">
+          <div class="feature"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></div><b>Explainable</b><p>Attention map, lesion overlay and a plain-language reason for every grade.</p></div>
+          <div class="feature"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 11a4 4 0 1 0-8 0M4 21c0-4 4-6 8-6s8 2 8 6M12 3v2"/></svg></div><b>Human-in-the-loop</b><p>The AI triages, the ophthalmologist agrees or overrides.</p></div>
+          <div class="feature"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 10 8l5 4.5M5 17l5-4.5L15 17M4 21h16M6 3h12"/></svg></div><b>Runs offline</b><p>Full pipeline on a PHC laptop - no internet needed.</p></div>
+        </div>
+      </section>
+
+      <div id="loading" hidden>
+        <div class="scan-eye"></div>
+        <p id="loadText">Analysing fundus image...</p>
+        <div class="dots"><i></i><i></i><i></i><i></i></div>
+      </div>
+
+      <section id="dash" hidden>
+        <div class="d-hero">
+          <div class="fundus-wrap">
+            <div class="fundus-frame" id="fundusFrame">
+              <div class="lens"><img id="fundusImg" alt="fundus"></div>
+              <span class="cap" id="imgCap">Evidence</span>
+              <button class="fs-btn" id="fsBtn" title="Expand"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5"/></svg></button>
+            </div>
+            <div class="layer-seg" id="layerSeg"></div>
+            <div class="legend" id="legend" hidden>
+              <span><i style="background:var(--ma)"></i>Microaneurysm</span>
+              <span><i style="background:var(--he)"></i>Hemorrhage</span>
+              <span><i style="background:var(--ex)"></i>Exudate</span>
+              <span><i style="background:var(--nv)"></i>Neovascular.</span>
+            </div>
+          </div>
+          <div class="d-headline">
+            <div class="d-topvitals" id="topVitals"></div>
+            <div class="d-title" id="dTitle">--</div>
+            <div class="d-sub" id="dSub">on the 0-4 International Clinical DR scale</div>
+            <div class="xai-strip" id="xaiStrip"></div>
+            <div class="gauges" id="gauges"></div>
+            <div class="verdict" id="verdict">
+              <div class="vi" id="verdictIcon"></div>
+              <div class="vt"><b id="verdictLabel">--</b><span id="verdictSub"></span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="ct">Lesion Findings</div>
+          <table class="ftable"><thead><tr><th>Indicator</th><th>Normal</th><th>Detected</th><th>Threshold</th><th>Status</th></tr></thead><tbody id="findTbody"></tbody></table>
+        </div>
+
+        <div class="stripcards">
+          <div class="mini"><div class="ct2">Why this grade</div><div class="why" id="whyList"></div></div>
+          <div class="mini"><div class="ct2">Patient history</div><div class="trend empty" id="trend">--</div></div>
+        </div>
+      </section>
+
+      <!-- ---------- ADMIN CONSOLE ---------- -->
+      <section id="admin" hidden>
+        <div class="adm-head">
+          <h1>District Console</h1>
+          <button class="btn" id="admRefresh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5"/></svg>Refresh</button>
+        </div>
+        <div class="adm-stats" id="admStats"></div>
+        <div class="adm-cols">
+          <div class="card">
+            <div class="ct">Patients <span id="admCount" class="ct-badge">0</span></div>
+            <div class="adm-tablewrap">
+              <table class="ftable adm-table">
+                <thead><tr><th>Patient</th><th>Age / Sex</th><th>Village</th><th>Screenings</th><th>Latest grade</th><th>Review</th></tr></thead>
+                <tbody id="admTbody"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card" id="admDetailCard">
+            <div class="ct">Patient detail</div>
+            <div id="admDetail" class="adm-detail"><div class="rv-empty">Select a patient from the list.</div></div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <footer id="actionBar" hidden>
+      <button class="btn primary" id="btnAgree"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Agree with AI</button>
+      <button class="btn warn" id="btnOverride"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Override</button>
+      <span id="override-panel" hidden>
+        <select id="overrideGrade"><option value="0">Grade 0 - No DR</option><option value="1">Grade 1 - Mild</option><option value="2">Grade 2 - Moderate</option><option value="3">Grade 3 - Severe</option><option value="4">Grade 4 - Proliferative</option></select>
+        <input id="overrideNotes" type="text" placeholder="Clinical note (optional)">
+        <button class="btn primary" id="btnOverrideSave">Save decision</button>
+      </span>
+      <span class="spacer"></span>
+      <span class="status-msg" id="statusMsg"></span>
+      <button class="btn" id="btnNew">New patient</button>
+      <button class="btn" id="btnPdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 10l5 5 5-5M5 21h14"/></svg>Open report</button>
+    </footer>
+
+    <div id="viewerModal" hidden>
+      <button class="vm-close" id="vmClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      <div class="vm-frame"><div class="lens"><img id="vmImg" alt="fundus enlarged"></div></div>
+      <div class="layer-seg" id="modalLayerSeg"></div>
+    </div>
+
+  </div>
+</div>
+<script src="dashboard.js"></script>
 </body>
 </html>

@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    (function () {
+      if (localStorage.getItem('netra_active_role') !== 'patient') window.location.replace('login.html');
+    }());
+  </script>
+  <title>Patient Portal — Netra Eye Care</title>
+  <meta name="description" content="Netra Patient Dashboard — Vision journey, retinal screening results, appointments, and ophthalmic health tracking.">
+  
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="dashboard-body">
+
+  <!-- ========================================================================
+       PATIENT DASHBOARD
+       ======================================================================== -->
+  <div id="view-dashboard">
+    <!-- LEFT SIDEBAR -->
+    <aside class="dash-sidebar">
+      <div class="sidebar-top">
+        <!-- Logo -> links to landing page -->
+        <a href="index.html" class="brand-logo" title="Back to Netra Landing Page">
+          <svg class="logo-eye-icon" viewBox="0 0 48 48" fill="none" style="width: 36px; height: 36px;">
+            <circle cx="24" cy="24" r="22" stroke="currentColor" stroke-width="2.5"/>
+            <circle cx="24" cy="24" r="14" stroke="currentColor" stroke-width="2"/>
+            <circle cx="24" cy="24" r="7" fill="currentColor"/>
+          </svg>
+          <div class="brand-text">
+            <span class="brand-name" style="font-size: 1.25rem;">Netra</span>
+            <span class="brand-tagline" style="font-size: 0.65rem;">Clearer Vision Healthier Tomorrow</span>
+          </div>
+        </a>
+
+        <!-- Navigation Menu -->
+        <ul class="dash-menu-list">
+          <li class="dash-menu-item active" id="navItemHome" data-target="dash-content-body">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+            <span data-i18n="menuHome">Home</span>
+          </li>
+
+          <li class="dash-menu-item" id="navItemReports">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+            </svg>
+            <span data-i18n="menuReports">My Reports</span>
+          </li>
+
+          <li class="dash-menu-item" id="navItemAppointments">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+            <span data-i18n="menuAppointments">Appointments</span>
+          </li>
+
+          <li class="dash-menu-item" id="navItemEyeHealth" data-target="cardOverviewContainer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+            </svg>
+            <span data-i18n="menuEyeHealth">Eye Health</span>
+          </li>
+
+          <li class="dash-menu-item" id="navItemReminders">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+            <span data-i18n="menuReminders">Reminders</span>
+            <span class="notification-dot"></span>
+          </li>
+
+          <li class="dash-menu-item" id="navItemResources" data-target="cardTipsContainer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            </svg>
+            <span data-i18n="menuResources">Resources</span>
+          </li>
+
+          <li class="dash-menu-item" id="navItemProfile" data-target="userProfileChipBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            <span data-i18n="menuProfile">Profile</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Support Help Box -->
+      <div class="sidebar-support-card">
+        <img class="support-avatar-img" src="assets/images/support_agent.jpg" alt="Support Assistant Maya">
+        <h5 data-i18n="sidebarHelpTitle">Have a question?</h5>
+        <p data-i18n="sidebarHelpDesc">We're here to help.</p>
+        <button class="btn-support-chat" id="btnContactSupport">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          <span data-i18n="sidebarContactBtn">Contact Support</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- DASHBOARD MAIN BODY -->
+    <div class="dash-main-area">
+      <!-- TOP BAR -->
+      <header class="dash-topbar">
+        <div class="dash-greeting-block">
+          <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <h2 id="dashGreetingText">Hello, Ananya </h2>
+            <span id="userSessionBadge" class="clinical-badge status-normal" style="font-size: 0.72rem; padding: 3px 9px;">Returning Patient</span>
+          </div>
+          <p data-i18n="dashSubGreeting">Take a step today for a clearer tomorrow.</p>
+        </div>
+
+        <div class="dash-top-actions">
+          <span class="dash-quote-text" data-i18n="dashQuote">“Healthy eyes, brighter days.”</span>
+
+          <!-- Search Bar -->
+          <div class="dash-search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="text" placeholder="Search..." data-i18n-placeholder="dashSearchPlaceholder">
+          </div>
+
+          <!-- Notification Bell -->
+          <button class="btn-notification" aria-label="Notifications">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+            <span class="badge-dot"></span>
+          </button>
+
+          <!-- Language Selector Dropdown -->
+          <div class="lang-dropdown-wrapper">
+            <button class="btn-control" id="langDropdownBtn" style="padding: 6px 10px; font-size: 0.8rem;" aria-label="Select Language">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="2" y1="12" x2="22" y2="12"/>
+              </svg>
+              <span id="langLabelLanding">English</span>
+            </button>
+            <div class="lang-menu" id="langDropdownMenu" style="width: 150px;">
+              <button class="lang-option active" data-lang="en"><span> English</span></button>
+              <button class="lang-option" data-lang="hi"><span> हिंदी</span></button>
+              <button class="lang-option" data-lang="kn"><span> ಕನ್ನಡ</span></button>
+            </div>
+          </div>
+
+          <!-- Adaptive Theme Mode Switcher in Dashboard -->
+          <button class="theme-toggle-btn" id="themeToggleDashBtn" title="Toggle Exam Room Mode">
+            <span id="themeToggleIcon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+              </svg>
+            </span>
+          </button>
+
+          <!-- User Profile Dropdown Chip -->
+          <div style="position: relative;">
+            <button class="user-profile-chip" id="userProfileChipBtn" aria-label="User menu">
+              <div class="user-initial-avatar" id="userAvatarInitial">A</div>
+              <span class="user-name-label" id="userNameLabel" data-i18n="patientName">Ananya Sharma</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </button>
+            
+            <div class="lang-menu" id="userProfileDropdown" style="width: 250px; right: 0;">
+              <div style="padding: 10px 12px; border-bottom: 1px solid var(--border-subtle);">
+                <strong id="dropdownUserName" style="font-size: 0.85rem; color: var(--text-primary); display: block;">Ananya Sharma</strong>
+                <span id="dropdownUserId" style="font-size: 0.72rem; color: var(--text-secondary); display: block;">ID: NETRA-2026-8841</span>
+                <span id="dropdownUserStatus" style="font-size: 0.72rem; color: var(--brand-primary); font-weight: 600; display: block; margin-top: 2px;">Patient Account</span>
+              </div>
+              <button class="lang-option" id="btnMenuSimulateScan" style="margin-top: 4px;">
+                <span> Practice Retinal Scan (Demo)</span>
+              </button>
+              <button class="lang-option" id="btnSwitchDemoUser">
+                <span> Switch to Demo Patient (Ananya)</span>
+              </button>
+              <button class="lang-option" id="btnMenuResetUser">
+                <span>↺ Clear Exam Records</span>
+              </button>
+              <a href="doctor-dashboard.html" class="lang-option" style="color: var(--brand-primary);">
+                <span> Switch to Doctor Portal</span>
+              </a>
+              <a href="login.html" class="lang-option" style="color: var(--status-critical); margin-top: 2px;" id="btnSignOutLink">
+                <span data-i18n="navSignOut"> Sign Out</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- DASHBOARD CARDS GRID -->
+      <div class="dash-content-body" id="dash-content-body">
+
+        <!-- PATIENT WELCOME ONBOARDING BANNER -->
+        <div id="newPatientWelcomeBanner" class="new-patient-welcome-card" style="display: none;">
+          <div class="new-patient-welcome-left">
+            <div class="welcome-sparkle-icon"></div>
+            <div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <h4 id="newPatientWelcomeTitle" style="font-size: 1.02rem; font-weight: var(--font-weight-bold); color: var(--text-primary);">
+                  Welcome to Netra Eye Care!
+                </h4>
+                <span class="clinical-badge status-normal" style="font-size: 0.7rem; padding: 2px 8px;">Patient Portal</span>
+              </div>
+              <p id="newPatientWelcomeDesc" style="font-size: 0.83rem; color: var(--text-secondary); margin-top: 4px; line-height: 1.4;">
+                Your digital eye health journey starts here. Schedule an annual dilated retinal screening at your local health centre to establish your baseline health.
+              </p>
+            </div>
+          </div>
+          <div class="new-patient-welcome-actions">
+            <button class="btn-primary" id="btnWelcomeBook" style="padding: 7px 14px; font-size: 0.82rem;">
+               Schedule Screening
+            </button>
+            <button class="btn-secondary" id="btnWelcomeSimulateScan" style="padding: 7px 14px; font-size: 0.82rem; background: var(--bg-surface); border-color: var(--brand-primary); color: var(--brand-primary); font-weight: 600;">
+               Practice Scan Demo
+            </button>
+            <button class="btn-control" id="btnDismissWelcomeBanner" style="padding: 5px 8px;" title="Dismiss banner">✕</button>
+          </div>
+        </div>
+        
+        <!-- ROW 1: Hero Banner & Next Appointment -->
+        <div class="dash-row-hero">
+          <!-- Panoramic Mountain Sunrise Banner -->
+          <div class="dash-hero-banner">
+            <img class="dash-hero-bg" src="assets/images/mountain_landscape.jpg" alt="Sunrise over misty mountains">
+            <div class="dash-hero-overlay"></div>
+            
+            <div class="dash-hero-text">
+              <span class="banner-kicker" id="bannerKickerText" data-i18n="bannerKicker">Your Vision Matters</span>
+              <h3 id="bannerTitleText" data-i18n="bannerTitle">Early Detection Brings a Brighter Tomorrow</h3>
+              <p id="bannerDescText" data-i18n="bannerDesc">Regular eye check-ups help keep your eyes healthy and your world clearer.</p>
+              <button class="btn-banner-action" id="btnBookBanner">
+                <span id="bannerBtnText" data-i18n="bannerBtn">Book an Appointment</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="5" y1="12" x2="19" y2="12"/>
+                  <polyline points="12 5 19 12 12 19"/>
+                </svg>
+              </button>
+            </div>
+
+            <div class="dash-hero-script">
+              See<br>A Brighter<br>Tomorrow
+            </div>
+          </div>
+
+          <!-- Next Appointment Card (Dynamic: Ananya vs New Patient) -->
+          <div class="card-appointment" id="cardAppointmentContainer">
+            <!-- Populated dynamically by JS -->
+          </div>
+        </div>
+
+        <!-- ROW 2: Latest Screening Result, Eye Health Overview, Reminders -->
+        <div class="dash-row-three">
+          <!-- Card: Latest Screening Result (Dynamic: Ananya vs New Patient) -->
+          <div class="card-screening" id="cardScreeningContainer">
+            <!-- Populated dynamically by JS -->
+          </div>
+
+          <!-- Card: Eye Health Overview (Dynamic: Ananya vs New Patient) -->
+          <div class="card-overview" id="cardOverviewContainer">
+            <!-- Populated dynamically by JS -->
+          </div>
+
+          <!-- Card: Reminders (Dynamic: Ananya vs New Patient) -->
+          <div class="card-reminders" id="cardRemindersContainer">
+            <!-- Populated dynamically by JS -->
+          </div>
+        </div>
+
+        <!-- ROW 3: Vision Journey, Quick Actions, Eye Care Tips -->
+        <div class="dash-row-bottom">
+          <!-- Card: Vision Journey Chart -->
+          <div class="card-journey">
+            <div class="card-header-line">
+              <h4 class="card-title" data-i18n="journeyTitle">Your Vision Journey</h4>
+              <select class="journey-select" id="journeyFilterSelect">
+                <option value="OD" data-i18n="journeyFilterOD">DR Grade (Right Eye)</option>
+                <option value="OS" data-i18n="journeyFilterOS">DR Grade (Left Eye)</option>
+                <option value="IOP" data-i18n="journeyFilterIop">IOP History (mmHg)</option>
+              </select>
+            </div>
+
+            <!-- Canvas for Line Chart -->
+            <div class="chart-wrapper">
+              <canvas id="journeyChartCanvas"></canvas>
+            </div>
+
+            <div class="journey-status-banner" id="journeyStatusBanner">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+              <div>
+                <h5 id="journeyHeadlineText" data-i18n="journeyStableHeadline">Your eye health has been stable</h5>
+                <p id="journeySubText" data-i18n="journeyStableSub">Keep maintaining regular check-ups to stay on track.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card: Quick Actions -->
+          <div class="card-quick-actions">
+            <div class="card-header-line">
+              <h4 class="card-title" data-i18n="quickActionsTitle">Quick Actions</h4>
+            </div>
+
+            <div class="quick-actions-grid">
+              <div class="action-tile" id="actionBookTile">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                  <line x1="16" y1="2" x2="16" y2="6"/>
+                  <line x1="8" y1="2" x2="8" y2="6"/>
+                  <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+                <span data-i18n="actionBook">Book Appointment</span>
+              </div>
+
+              <div class="action-tile" id="actionReportsTile">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                  <line x1="16" y1="13" x2="8" y2="13"/>
+                  <line x1="16" y1="17" x2="8" y2="17"/>
+                </svg>
+                <span data-i18n="actionReports">View Reports</span>
+              </div>
+
+              <div class="action-tile" id="actionLearnTile">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                </svg>
+                <span data-i18n="actionLearn">Learn About Eye Health</span>
+              </div>
+
+              <div class="action-tile" id="actionProfileTile">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                </svg>
+                <span data-i18n="actionProfile">Update Profile</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card: Eye Care Tips -->
+          <div class="card-tips" id="cardTipsContainer">
+            <div>
+              <div class="card-header-line">
+                <h4 class="card-title" data-i18n="tipsTitle">Eye Care Tips</h4>
+              </div>
+
+              <div class="tips-header-content">
+                <h4 data-i18n="tipsHeadline">Give your eyes the care they deserve.</h4>
+                <img class="tips-thumb" src="assets/images/healthy_eye.jpg" alt="Eye Care">
+              </div>
+
+              <ul class="tips-checklist" id="tipsChecklist">
+                <!-- Generated by JS -->
+              </ul>
+            </div>
+
+            <div class="tips-carousel-controls">
+              <button class="carousel-arrow-btn" id="prevTipBtn" aria-label="Previous Tip">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+              </button>
+              <div class="carousel-dots" id="carouselDotsContainer">
+                <!-- Dots generated by JS -->
+              </div>
+              <button class="carousel-arrow-btn" id="nextTipBtn" aria-label="Next Tip">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom Tagline Bar -->
+      <footer class="dash-bottom-bar">
+        <span>Netra | Patient Portal | v1.0</span>
+        <span data-i18n="footerMotto">Clearer Vision. Healthier Lives.</span>
+      </footer>
+    </div>
+  </div>
+
+
+  <!-- ========================================================================
+       MODAL: COMPREHENSIVE RETINAL SCREENING REPORT (EXPLAINABLE AI)
+       ======================================================================== -->
+  <div class="modal-backdrop" id="modalReport">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <h3 data-i18n="modalReportTitle">Comprehensive Retinal Screening Report</h3>
+          <p id="modalReportPatientSubtitle" data-i18n="modalReportPatient">Patient: Ananya Sharma | ID: NETRA-2026-8841</p>
+        </div>
+        <button class="btn-close-modal" data-close-modal="true" aria-label="Close modal">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="modal-layer-viewer">
+          <!-- Multi-Layer Fundus Image Viewer -->
+          <div class="modal-image-display">
+            <div class="fundus-preview-wrap" style="position: relative; width: 100%; max-width: 340px; aspect-ratio: 1 / 1;">
+              <img id="fundusDisplayImg" class="fundus-interactive-canvas" src="assets/images/retinal_fundus_od.jpg" alt="Retinal fundus image">
+              <canvas id="fundusCanvasOverlay" style="position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; border-radius: var(--radius-lg);"></canvas>
+            </div>
+            
+            <!-- Layer Toggles -->
+            <div class="layer-toggles-row">
+              <button class="btn-layer-toggle active" data-layer="original" data-i18n="layerOriginal">Original</button>
+              <button class="btn-layer-toggle" data-layer="enhanced" data-i18n="layerEnhanced">Enhanced</button>
+              <button class="btn-layer-toggle" data-layer="gradcam" data-i18n="layerGradcam">Grad-CAM Heatmap</button>
+              <button class="btn-layer-toggle" data-layer="lesions" data-i18n="layerLesions">Lesion Overlay</button>
+              <button class="btn-layer-toggle" data-layer="vessels" data-i18n="layerVessels">Vessel Map</button>
+            </div>
+          </div>
+
+          <!-- Clinical Findings Panel -->
+          <div class="report-findings-panel">
+            <h4 data-i18n="findingsTitle">Clinical Diagnosis & Biomarkers</h4>
+
+            <div class="finding-item">
+              <div class="finding-item-header">
+                <span class="finding-title">Diabetic Retinopathy Grade</span>
+                <span class="clinical-badge status-normal">Grade 0 — Normal</span>
+              </div>
+              <p class="finding-desc" data-i18n="findingsDR">DR Severity: Grade 0 (No Diabetic Retinopathy)</p>
+            </div>
+
+            <div class="finding-item">
+              <div class="finding-item-header">
+                <span class="finding-title">AI Grading Confidence</span>
+                <span class="clinical-badge status-normal">98.4% Calibrated</span>
+              </div>
+              <p class="finding-desc" data-i18n="findingsConfidence">AI Confidence Score: 98.4% (Calibrated on APTOS / IDRiD Indian validation cohorts)</p>
+            </div>
+
+            <div class="finding-item">
+              <div class="finding-item-header">
+                <span class="finding-title">Optic Disc / Cup-to-Disc Ratio (CDR)</span>
+                <span class="clinical-badge status-normal">0.42 (Healthy)</span>
+              </div>
+              <p class="finding-desc" data-i18n="findingsCdr">Cup-to-Disc Ratio (CDR): 0.42 (Normal, below 0.65 glaucoma threshold)</p>
+            </div>
+
+            <div class="finding-item">
+              <div class="finding-item-header">
+                <span class="finding-title">Macula & Foveal Center</span>
+                <span class="clinical-badge status-normal">Clear Reflex</span>
+              </div>
+              <p class="finding-desc" data-i18n="findingsMacula">Macular Status: Healthy foveal reflex, no microaneurysms or hard exudates</p>
+            </div>
+
+            <div class="finding-item" style="background-color: var(--brand-primary-light);">
+              <span class="finding-title" style="color: var(--brand-primary);" data-i18n="findingsReviewer">Reviewed & Approved by: Dr. Meera Iyer (Senior Ophthalmologist)</span>
+              <p class="finding-desc" data-i18n="findingsTimestamp">Timestamp: 10 Aug 2026, 11:42 AM IST • Christ University Health Centre</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-primary" onclick="window.print()" data-i18n="btnPrintReport">Print / Save PDF Report</button>
+        <button class="btn-secondary" data-close-modal="true" data-i18n="btnClose">Close</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ========================================================================
+       MODAL: BOOK APPOINTMENT
+       ======================================================================== -->
+  <div class="modal-backdrop" id="modalAppointment">
+    <div class="modal-card" style="max-width: 520px;">
+      <div class="modal-header">
+        <div>
+          <h3>Book / Reschedule Appointment</h3>
+          <p>Choose your nearest Primary Health Centre or District Hospital</p>
+        </div>
+        <button class="btn-close-modal" data-close-modal="true">✕</button>
+      </div>
+      <form id="appointmentBookingForm">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Select Screening Centre / Hospital</label>
+            <select class="form-control" id="selectApptLocation">
+              <option value="Christ University Health Centre (Bengaluru)">Christ University Health Centre (Bengaluru)</option>
+              <option value="Chikkaballapur District Government Hospital">Chikkaballapur District Government Hospital</option>
+              <option value="Devanahalli Rural Primary Health Centre">Devanahalli Rural Primary Health Centre</option>
+              <option value="Sidlaghatta Community Health Centre">Sidlaghatta Community Health Centre</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Ophthalmologist / Health Officer</label>
+            <select class="form-control" id="selectApptDoctor">
+              <option value="Dr. Meera Iyer (Senior Ophthalmologist)">Dr. Meera Iyer (Senior Ophthalmologist)</option>
+              <option value="Dr. Rao (Retina Specialist)">Dr. Rao (Retina Specialist)</option>
+              <option value="Lakshmi (Certified PHC Screening Officer)">Lakshmi (Certified PHC Screening Officer)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Preferred Date</label>
+            <input type="date" class="form-control" id="inputApptDate" value="2026-09-25" required>
+          </div>
+          <div class="form-group">
+            <label>Time Slot</label>
+            <select class="form-control" id="selectApptTime">
+              <option value="10:30 AM">10:30 AM – 11:00 AM</option>
+              <option value="11:30 AM">11:30 AM – 12:00 PM</option>
+              <option value="02:00 PM">02:00 PM – 02:30 PM</option>
+              <option value="04:00 PM">04:00 PM – 04:30 PM</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn-primary">Confirm Booking</button>
+          <button type="button" class="btn-secondary" data-close-modal="true">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- ========================================================================
+       MODAL: RETINAL SCAN CAMERA SIMULATOR ("WHAT IF I DID?")
+       ======================================================================== -->
+  <div class="modal-backdrop" id="modalSimulateScan">
+    <div class="modal-card" style="max-width: 580px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div style="width: 40px; height: 40px; border-radius: 8px; background: var(--brand-primary-light); color: var(--brand-primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/>
+              <path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/>
+            </svg>
+          </div>
+          <div>
+            <h3>Retinal Screening Simulator</h3>
+            <p id="simModalSubtitle">Experience what happens when you complete your first eye screening</p>
+          </div>
+        </div>
+        <button class="btn-close-modal" data-close-modal="true" aria-label="Close modal">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Live Viewfinder Box -->
+        <div class="scan-viewfinder-box">
+          <img src="assets/images/retinal_fundus_od.jpg" id="simFundusPreviewImg" alt="Retinal Fundus Preview" class="sim-fundus-img">
+          <div class="viewfinder-crosshairs"></div>
+          <div class="viewfinder-reticle"></div>
+          <div class="viewfinder-hud">
+            <span class="hud-tag">45° CLINICAL FUNDUS (OD)</span>
+            <span class="hud-tag" id="simHudStatus">OPTICAL ALIGNMENT OK</span>
+          </div>
+          <div id="simCameraFlash" class="camera-flash-effect"></div>
+        </div>
+
+        <!-- 4 Step Flow -->
+        <div class="sim-steps-tracker" style="margin-top: 16px;">
+          <div class="sim-step active" id="simStep1">
+            <span class="step-num">1</span>
+            <span>Align OD Fundus</span>
+          </div>
+          <div class="sim-step" id="simStep2">
+            <span class="step-num">2</span>
+            <span>Capture Photo</span>
+          </div>
+          <div class="sim-step" id="simStep3">
+            <span class="step-num">3</span>
+            <span>AI Inference</span>
+          </div>
+          <div class="sim-step" id="simStep4">
+            <span class="step-num">4</span>
+            <span>Update Record</span>
+          </div>
+        </div>
+
+        <!-- Diagnostics Output (revealed after scan) -->
+        <div id="simDiagnosticsOutput" class="sim-diagnostics-box" style="margin-top: 14px; display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <strong style="color: var(--text-primary); font-size: 0.88rem;">✓ Screening Analysis Complete</strong>
+            <span class="clinical-badge status-normal">Grade 0 — Normal (Healthy)</span>
+          </div>
+          <p style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.4;">
+            Optic Disc CDR: <strong>0.42</strong> • Macula: <strong>Clear Reflex</strong> • Microaneurysms: <strong>0 detected</strong> • AI Calibrated Confidence: <strong>98.4%</strong>
+          </p>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-primary" id="btnStartScanSequence">
+           Capture & Analyze Retinal Scan
+        </button>
+        <button type="button" class="btn-secondary" data-close-modal="true">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ========================================================================
+       MODAL: SUPPORT CHAT
+       ======================================================================== -->
+  <div class="modal-backdrop" id="modalSupport">
+    <div class="modal-card" style="max-width: 480px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <img src="assets/images/support_agent.jpg" alt="Maya" style="width: 40px; height: 40px; border-radius: 50%;">
+          <div>
+            <h3>Netra Support Assistant</h3>
+            <p>Maya • Connected & Online</p>
+          </div>
+        </div>
+        <button class="btn-close-modal" data-close-modal="true">✕</button>
+      </div>
+      <div class="modal-body" style="background-color: var(--bg-surface-subtle); min-height: 260px;">
+        <div style="background: var(--bg-surface); padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); max-width: 85%;">
+          <p style="font-size: 0.85rem; color: var(--text-primary);" id="supportWelcomeMessage">
+            Hello!  How can I help you today regarding your eye health check-ups, appointments, or understanding your retinal screening results?
+          </p>
+        </div>
+        <div style="align-self: flex-end; background: var(--brand-primary); color: #FFF; padding: 10px 14px; border-radius: var(--radius-md); max-width: 80%; margin-top: 12px;">
+          <p style="font-size: 0.85rem;">How often should diabetics get their retinas checked?</p>
+        </div>
+        <div style="background: var(--bg-surface); padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); max-width: 85%; margin-top: 12px;">
+          <p style="font-size: 0.85rem; color: var(--text-primary);">Diabetic eye guidelines recommend an annual dilated fundus screening. Netra helps you get screened right at your local Primary Health Centre (PHC) without travelling far!</p>
+        </div>
+      </div>
+      <div class="modal-footer" style="padding: 10px 16px;">
+        <input type="text" class="form-control" placeholder="Type your question..." style="flex: 1;">
+        <button class="btn-primary" style="padding: 10px 16px;">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODAL: 20-20-20 EYE REST TIMER
+       ======================================================================== -->
+  <div class="modal-backdrop" id="modalEyeRestTimer">
+    <div class="modal-card" style="max-width: 440px; text-align: center;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 10px; text-align: left;">
+          <div style="width: 38px; height: 38px; border-radius: 8px; background: var(--accent-action-bg); color: var(--accent-action); display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+            ️
+          </div>
+          <div>
+            <h3 style="font-size: 1.05rem;">20-20-20 Eye Break Timer</h3>
+            <p style="font-size: 0.78rem;">Relieve digital eye strain and refresh your vision</p>
+          </div>
+        </div>
+        <button class="btn-close-modal" data-close-modal="true" aria-label="Close modal">✕</button>
+      </div>
+
+      <div class="modal-body" style="align-items: center;">
+        <div style="background: var(--bg-surface-subtle); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 10px 14px; text-align: left; font-size: 0.8rem; color: var(--text-secondary); line-height: 1.45; width: 100%;">
+           <strong>The 20-20-20 Clinical Rule:</strong> Every 20 minutes on screens, look away at an object at least 20 feet away for 20 seconds. This relaxes the ciliary eye muscles and replenishes tear films.
+        </div>
+
+        <!-- Animated Progress Circle -->
+        <div class="timer-circle-wrap">
+          <svg class="timer-svg" viewBox="0 0 160 160">
+            <circle class="timer-circle-bg" cx="80" cy="80" r="70" />
+            <circle id="timerCircleProgress" class="timer-circle-progress" cx="80" cy="80" r="70" />
+          </svg>
+          <div class="timer-center-text">
+            <span class="timer-seconds-val" id="timerSecondsCount">20</span>
+            <span class="timer-seconds-sub" id="timerSecondsUnit">Seconds</span>
+          </div>
+        </div>
+
+        <p id="timerStatusInstruction" style="font-size: 0.88rem; font-weight: 600; color: var(--brand-primary); min-height: 22px;">
+          Ready to begin? Focus on an object across the room.
+        </p>
+
+        <!-- Timer Controls Row -->
+        <div style="display: flex; gap: 10px; width: 100%; justify-content: center; margin-top: 4px;">
+          <button type="button" class="btn-primary" id="btnToggleTimer" style="padding: 9px 18px; font-size: 0.88rem; flex: 1;">
+            ▶ Start 20s Break
+          </button>
+          <button type="button" class="btn-secondary" id="btnResetTimer" style="padding: 9px 14px; font-size: 0.88rem;">
+            ↺ Reset
+          </button>
+        </div>
+
+        <!-- 20-min Repeating Prompt Option -->
+        <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; margin-top: 8px; padding-top: 10px; border-top: 1px dashed var(--border-subtle); font-size: 0.78rem; color: var(--text-secondary);">
+          <span> Remind me again in 20 minutes:</span>
+          <label style="display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-weight: 600; color: var(--brand-primary);">
+            <input type="checkbox" id="checkRepeatTimer" checked style="accent-color: var(--brand-primary); cursor: pointer;">
+            Enabled
+          </label>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="justify-content: center;">
+        <button type="button" class="btn-secondary" data-close-modal="true" style="width: 100%;">
+          Close Timer
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ========================================================================
+       MODAL: REMINDERS & EYE CARE SCHEDULE MANAGER
+       ======================================================================== -->
+  <div class="modal-backdrop" id="modalRemindersManager">
+    <div class="modal-card" style="max-width: 520px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 38px; height: 38px; border-radius: 8px; background: var(--brand-primary-light); color: var(--brand-primary); display: flex; align-items: center; justify-content: center;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+          </div>
+          <div>
+            <h3>Eye Health Reminders</h3>
+            <p>Manage your appointments, screening reviews & daily habits</p>
+          </div>
+        </div>
+        <button class="btn-close-modal" data-close-modal="true" aria-label="Close modal">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Active Reminders List -->
+        <div>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+            <h5 style="font-size: 0.85rem; color: var(--text-primary); font-weight: var(--font-weight-bold);">
+              Active Reminders
+            </h5>
+            <span style="font-size: 0.72rem; color: var(--text-secondary);" id="remindersCountLabel">
+              3 items
+            </span>
+          </div>
+
+          <div class="reminders-manager-list" id="remindersManagerListContainer">
+            <!-- Populated dynamically by JS -->
+          </div>
+        </div>
+
+        <!-- Add Custom Reminder Form Box -->
+        <div class="add-reminder-box">
+          <h5 style="font-size: 0.83rem; color: var(--text-primary); margin-bottom: 10px; font-weight: var(--font-weight-bold);">
+            ➕ Add a Custom Reminder
+          </h5>
+          <form id="formAddReminder" style="display: flex; flex-direction: column; gap: 10px;">
+            <div class="form-group">
+              <input type="text" id="inputNewReminderTitle" class="form-control" placeholder="e.g. Apply Lubricating Eye Drops or Check Blood Glucose" required style="padding: 8px 12px; font-size: 0.85rem;">
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+              <div class="form-group">
+                <select id="selectReminderCategory" class="form-control" style="padding: 8px 12px; font-size: 0.82rem;">
+                  <option value="meds"> Eye Drops / Medicine</option>
+                  <option value="screen">️ 20-20-20 Screen Rest</option>
+                  <option value="screening"> Retinal Screening</option>
+                  <option value="sugar"> Glucose / Diabetes</option>
+                  <option value="doctor"> Doctor Visit</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <input type="text" id="inputReminderTime" class="form-control" placeholder="e.g. Every 4 hours / 09:00 AM" required style="padding: 8px 12px; font-size: 0.82rem;">
+              </div>
+            </div>
+            <button type="submit" class="btn-primary" style="padding: 8px 14px; font-size: 0.83rem; align-self: flex-start;">
+              + Save Reminder
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" data-close-modal="true">
+          Done
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Application Logic & Translations -->
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/translations.js"></script>
+  <script src="js/netra-bridge.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

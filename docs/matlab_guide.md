@@ -5,6 +5,32 @@
 
 ---
 
+## Running the app
+
+```matlab
+cd  <repo>\netra
+addpath(genpath('src')); addpath('app')
+NetraApp
+```
+
+**Login (prototype credentials — `src/datalayer/checkAuth.m`):**
+
+| User | Password | Role |
+|---|---|---|
+| `phc` | `phc2026` | operator — register patients, run screenings |
+| `doctor` | `doctor2026` | operator |
+| `admin` | `netra2026` | district console — all patients + data |
+
+**Flow:** login → (operator) find or register a patient → screening dashboard
+(open fundus image → results → Agree/Override → Open report) · (admin) console
+with stat tiles + patient table → click a patient for the full dossier.
+
+**Data:** `netra_patients.mat` (profiles) + `netra_db.mat` (screenings), linked
+by patient id, both persist across sessions. `seedDemoPatients` populates a demo
+cohort; `test_app` checks the data layer.
+
+---
+
 ## 0. The one strategic decision
 
 **Do not bet the demo on the Colab ONNX models arriving on time and working.**

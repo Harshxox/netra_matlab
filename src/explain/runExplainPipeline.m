@@ -19,6 +19,8 @@ function [imagePaths, reportPath] = runExplainPipeline(processedImg, record, mas
     if ~isfield(opts,'makePdf'); opts.makePdf = true;     end
     if ~isfield(opts,'gradingNet');  opts.gradingNet  = []; end
     if ~isfield(opts,'gradingInfo'); opts.gradingInfo = struct('inputSize',[224 224 3]); end
+    if ~isfield(opts,'lesionsBlock'); opts.lesionsBlock = struct(); end
+    if ~isfield(opts,'fovMask'); opts.fovMask = []; end
 
     pid = record.patientId;
     outDir = fullfile(opts.saveDir, char(pid));
@@ -29,18 +31,29 @@ function [imagePaths, reportPath] = runExplainPipeline(processedImg, record, mas
         grade = record.result.grade;
     end
 
-    % ---- heatmap: real Grad-CAM if we have the net, else lesion evidence ---
-    heatMethod = 'lesion-evidence';
+    sz = size(processedImg,[1 2]);
+    fov = opts.fovMask; if isempty(fov); fov = processedImg(:,:,2) > 0.05; end
+
+    % ---- attention map ---------------------------------------------
+    %   trained CNN present -> Grad-CAM
+    %   otherwise            -> occlusion-sensitivity on the classical grader
+    %                           (decisionInfluenceMap), a model-agnostic analogue
+    heatMethod = 'occlusion-sensitivity';
     if ~isempty(opts.gradingNet)
         try
             [heatmap, heatMethod] = generateGradCAM(opts.gradingNet, processedImg, grade, opts.gradingInfo);
         catch e
-            warning('runExplainPipeline:gradcam','Grad-CAM failed (%s) - using lesion evidence map.', e.message);
-            heatmap = lesionEvidenceHeatmap(masks, size(processedImg,[1 2]));
+            warning('runExplainPipeline:gradcam','Grad-CAM failed (%s) - using occlusion sensitivity.', e.message);
+            heatmap = safeInfluence(masks, opts.lesionsBlock, fov, sz);
         end
     else
-        heatmap = lesionEvidenceHeatmap(masks, size(processedImg,[1 2]));
+        heatmap = safeInfluence(masks, opts.lesionsBlock, fov, sz);
     end
+
+    % ---- explanation sanity check: attention vs detected lesions ----
+    [xaiOK, xaiScore, xaiLabel] = xaiAgreement(heatmap, masks, fov);
+    explain = struct('heatMethod', heatMethod, ...
+                     'xaiAgreement', xaiOK, 'xaiScore', xaiScore, 'xaiLabel', xaiLabel);
 
     % ---- write images -------------------------------------------------
     gradcamImg  = overlayHeatmap(processedImg, heatmap, 0.45);
@@ -54,14 +67,28 @@ function [imagePaths, reportPath] = runExplainPipeline(processedImg, record, mas
     imagePaths.gradcam     = gradcamPath;
     imagePaths.evidence    = evidencePath;
     imagePaths.heatMethod  = heatMethod;
+    imagePaths.explain     = explain;
 
     % keep the record's image block in sync for the report
     record.images.gradcam  = gradcamPath;
     record.images.evidence = evidencePath;
+    record.explain         = explain;
 
     % ---- PDF --------------------------------------------------------
     reportPath = '';
     if opts.makePdf
         reportPath = generateReport(record, struct('dir','reports','open',false));
+    end
+end
+
+% --------------------------------------------------------------------
+function h = safeInfluence(masks, lesionsBlock, fov, sz)
+    try
+        h = decisionInfluenceMap(masks, lesionsBlock, fov, 12);
+        if ~any(h(:) > 0)
+            h = lesionEvidenceHeatmap(masks, sz);   % nothing swings the grade
+        end
+    catch
+        h = lesionEvidenceHeatmap(masks, sz);
     end
 end
