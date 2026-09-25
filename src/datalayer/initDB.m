@@ -11,7 +11,7 @@ function db = initDB(dbPath)
 
     if isfile(dbPath)
         s = load(dbPath, 'db');
-        db = s.db;
+        db = migrate(s.db);
         return
     end
 
@@ -30,10 +30,45 @@ function db = initDB(dbPath)
         string.empty(0,1), ...   % reviewNotes
         string.empty(0,1), ...   % gradingMethod (onnx/rules)
         string.empty(0,1), ...   % reportPath
+        string.empty(0,1), ...   % imageDir      (folder holding this screening's overlays)
+        double.empty(0,1), ...   % maCount
+        double.empty(0,1), ...   % heCount
+        double.empty(0,1), ...   % exudateAreaPct
+        logical.empty(0,1), ...  % nvPresent
+        double.empty(0,1), ...   % focusScore
         'VariableNames', {'patientId','eye','date','grade','gradeLabel', ...
             'referable','confidence','qualityStatus','routing','reviewStatus', ...
-            'finalGrade','reviewNotes','gradingMethod','reportPath'});
+            'finalGrade','reviewNotes','gradingMethod','reportPath', ...
+            'imageDir','maCount','heCount','exudateAreaPct','nvPresent','focusScore'});
 
     save(dbPath, 'db');
     fprintf('Created new screening database: %s\n', dbPath);
+end
+
+% =====================================================================
+function db = migrate(db)
+%MIGRATE  Add columns introduced after a database was first created, so an
+%         existing netra_db.mat keeps working instead of erroring on access.
+    defaults = { ...
+        'imageDir',       string(missing); ...
+        'maCount',        NaN; ...
+        'heCount',        NaN; ...
+        'exudateAreaPct', NaN; ...
+        'nvPresent',      false; ...
+        'focusScore',     NaN };
+
+    n = height(db);
+    for k = 1:size(defaults,1)
+        name = defaults{k,1};
+        if ~ismember(name, db.Properties.VariableNames)
+            val = defaults{k,2};
+            if isstring(val)
+                db.(name) = repmat(string(missing), n, 1);
+            elseif islogical(val)
+                db.(name) = false(n,1);
+            else
+                db.(name) = nan(n,1);
+            end
+        end
+    end
 end

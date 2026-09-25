@@ -158,12 +158,19 @@ function r = webifyRecord(r, root)
 end
 
 function d = webifyDossier(d, root)
-    if isfield(d,'screenings') && ~isempty(d.screenings)
-        for k = 1:numel(d.screenings)
-            if isfield(d.screenings(k),'reportPath')
-                d.screenings(k).reportPath = toUrl(d.screenings(k).reportPath, root);
+    if ~isfield(d,'screenings') || isempty(d.screenings); return; end
+    for k = 1:numel(d.screenings)
+        s = d.screenings{k};
+        if isfield(s,'reportPath')
+            s.reportPath = toUrl(s.reportPath, root);
+        end
+        if isfield(s,'images') && isstruct(s.images)
+            f = fieldnames(s.images);
+            for j = 1:numel(f)
+                s.images.(f{j}) = toUrl(s.images.(f{j}), root);
             end
         end
+        d.screenings{k} = s;
     end
 end
 

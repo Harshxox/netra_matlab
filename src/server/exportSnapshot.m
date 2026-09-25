@@ -1,11 +1,13 @@
-function exportSnapshot(nCases)
+function exportSnapshot(~)
 %EXPORTSNAPSHOT  Bake REAL pipeline output into web/data/ for offline hosting.
 %
-%   exportSnapshot        % 6 demo cases
-%   exportSnapshot(10)
+%   exportSnapshot
 %
-%   Runs the actual MATLAB pipeline over sample fundus images, copies every
-%   overlay PNG into web/data/images/, and writes web/data/snapshot.json.
+%   Re-seeds the demo cohort (every patient screened once, each on a
+%   different fundus image), copies every overlay PNG into web/data/images/,
+%   and writes web/data/snapshot.json.
+%
+%   NOTE: this WIPES netra_patients.mat and netra_db.mat and rebuilds them.
 %
 %   The deployed site loads this whenever the MATLAB backend is unreachable,
 %   so a judge opening the public URL with your laptop off still sees genuine
@@ -13,8 +15,6 @@ function exportSnapshot(nCases)
 %   page or invented numbers.
 %
 %   Re-run this whenever the pipeline changes, then commit web/data/.
-
-    if nargin < 1 || isempty(nCases); nCases = 6; end
 
     root = fileparts(fileparts(fileparts(mfilename('fullpath'))));
     cd(root);
@@ -25,41 +25,22 @@ function exportSnapshot(nCases)
     imgDir = fullfile(outDir,'images');
     if ~exist(imgDir,'dir'); mkdir(imgDir); end
 
-    fprintf('Snapshot  seeding demo patients...\n');
-    try; seedDemoPatients(); catch ME; fprintf(2,'  %s\n', ME.message); end
-
-    samples = dir(fullfile(root,'data','samples','*.png'));
-    if isempty(samples)
-        error('exportSnapshot:noSamples','No images in data/samples/.');
+    % seedDemoPatients screens every patient once, each with a different
+    % sample image, and hands back the full records - so there is no second
+    % pipeline pass here and every patient owns a distinct retina.
+    fprintf('Snapshot  seeding demo cohort (one screening each)...\n');
+    raw = {};
+    try
+        raw = seedDemoPatients();
+    catch ME
+        fprintf(2,'  %s\n', ME.message);
     end
-    nCases = min(nCases, numel(samples));
 
-    P = findPatients();
     records = {};
-
-    fprintf('Snapshot  running the pipeline on %d images...\n', nCases);
-    for k = 1:nCases
-        imgPath = fullfile(samples(k).folder, samples(k).name);
-
-        if height(P) >= k
-            pid = char(P.patientId(k));
-        else
-            pid = sprintf('PT-SNAP-%03d', k);
-        end
-
-        fprintf('  [%d/%d] %s -> %s\n', k, nCases, samples(k).name, pid);
-        try
-            rec = runPipeline(imgPath, pid, 'OD', struct( ...
-                    'save', true, 'makePdf', true, ...
-                    'saveDir', fullfile(root,'images')));
-        catch ME
-            fprintf(2,'      skipped: %s\n', ME.message);
-            continue
-        end
-
-        rec = localiseImages(rec, imgDir, root, k);
-        records{end+1} = rec; %#ok<AGROW>
+    for k = 1:numel(raw)
+        records{end+1} = localiseImages(raw{k}, imgDir, root, k); %#ok<AGROW>
     end
+    fprintf('Snapshot  captured %d screening record(s).\n', numel(records));
 
     % ---- dossiers for every patient we touched ----------------------
     dossiers = struct();
@@ -123,12 +104,18 @@ function rec = localiseImages(rec, imgDir, root, idx) %#ok<INUSD>
 end
 
 function d = stripPaths(d)
-    if isfield(d,'screenings')
-        for k = 1:numel(d.screenings)
-            if isfield(d.screenings(k),'reportPath')
-                d.screenings(k).reportPath = '';
-            end
+%STRIPPATHS  Blank machine-local paths in the offline dossier. Every patient
+%            has a full record in snapshot.records, so the UI falls back to
+%            that for overlays instead of pointing at this machine's disk.
+    if ~isfield(d,'screenings'); return; end
+    for k = 1:numel(d.screenings)
+        s = d.screenings{k};
+        if isfield(s,'reportPath'); s.reportPath = ''; end
+        if isfield(s,'images') && isstruct(s.images)
+            f = fieldnames(s.images);
+            for j = 1:numel(f); s.images.(f{j}) = ''; end
         end
+        d.screenings{k} = s;
     end
 end
 

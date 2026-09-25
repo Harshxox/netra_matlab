@@ -1,6 +1,12 @@
-function seedDemoPatients()
+function records = seedDemoPatients()
 %SEEDDEMOPATIENTS  Populate the registry + screenings with a demo cohort.
 %   For the demo / video only. Wipes netra_patients.mat and netra_db.mat first.
+%
+%   records = seedDemoPatients()  also returns the full pipeline record for
+%   each patient, so exportSnapshot can bake them without screening twice.
+%
+%   Each patient gets a DIFFERENT sample image, so the cohort looks like
+%   eight real people rather than one image repeated.
 
     warning('off','all');
     for f = {'netra_patients.mat','netra_db.mat'}
@@ -21,6 +27,7 @@ function seedDemoPatients()
     s = dir('data/samples/*.png');
     assert(~isempty(s), 'no sample images');
 
+    records = {};
     for i = 1:size(people,1)
         [pid,~] = registerPatient(struct('name',people{i,1},'age',people{i,2}, ...
             'sex',people{i,3},'phone',people{i,4},'village',people{i,5}, ...
@@ -29,7 +36,9 @@ function seedDemoPatients()
         img = fullfile(s(mod(i-1, numel(s))+1).folder, s(mod(i-1, numel(s))+1).name);
         try
             rec = runPipeline(img, pid, 'OD');
-            fprintf('  %-16s %s -> grade %d (%s)\n', people{i,1}, pid, rec.result.grade, rec.result.gradeLabel);
+            records{end+1} = rec; %#ok<AGROW>
+            fprintf('  %-16s %s  %-22s -> grade %d (%s)\n', people{i,1}, pid, ...
+                    s(mod(i-1, numel(s))+1).name, rec.result.grade, rec.result.gradeLabel);
             if mod(i,2) == 0
                 saveReviewDecision(pid, 'OD', rec.result.grade, 'Agree with AI', 'Dr. Reviewer');
             end

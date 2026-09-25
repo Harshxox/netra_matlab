@@ -394,11 +394,108 @@
 
     const hud = $('.hud .ok');
     if (hud && rec.quality) {
+      const f = rec.quality.focusScore;
       hud.textContent = 'Quality: ' + cap(rec.quality.status)
-        + ' (focus ' + Number(rec.quality.focusScore || 0).toFixed(3) + ')';
+        + (f ? ' (focus ' + Number(f).toFixed(3) + ')' : '');
     }
 
+    updateEvidenceSidebar(rec);
     swapRetinaCanvas(rec);
+  }
+
+  /**
+   * The sidebar ships with hardcoded clinical claims (macular edema, a
+   * glaucoma CDR, TTA agreement) that this pipeline does not produce.
+   * Replace them with findings actually present in the record, so nothing
+   * on screen asserts something the model never computed.
+   */
+  function updateEvidenceSidebar(rec) {
+    const res = rec.result || {}, les = rec.lesions || {}, ex = rec.explain || {};
+    const cards = $$('.evidence-card');
+
+    // --- card 1: replace the three fabricated flags ------------------
+    const flags = $$('.evidence-card .flag');
+    if (flags.length) {
+      const items = [];
+      if (les.nvPresent) {
+        items.push(['', 'Neovascularization detected',
+                    'Proliferative features present — urgent referral', '']);
+      }
+      if (les.exudateAreaPct > 0) {
+        items.push(['', 'Hard exudates ' + Number(les.exudateAreaPct).toFixed(2) + '% of retina',
+                    'Detected by the lesion segmentation stage', 'warning']);
+      }
+      if (les.maCount != null || les.heCount != null) {
+        items.push(['', 'MA ' + fmtInt(les.maCount) + ' · HE ' + fmtInt(les.heCount),
+                    'Counts drive the ICDR grade', les.heCount > 0 ? 'warning' : 'normal']);
+      }
+      if (ex.xaiLabel) {
+        items.push(['', 'Attention vs lesions: ' + ex.xaiLabel,
+                    'Model attention overlaps the detected lesions', 'normal']);
+      }
+      if (rec.quality && rec.quality.status) {
+        items.push(['', 'Image quality: ' + cap(rec.quality.status),
+                    'Gating check before grading', 'normal']);
+      }
+
+      flags.forEach((el, i) => {
+        const it = items[i];
+        if (!it) { el.style.display = 'none'; return; }
+        el.style.display = '';
+        el.className = 'flag' + (it[3] ? ' ' + it[3] : '');
+        el.innerHTML = '<b>' + (it[3] === 'normal' ? '✓' : '⚠') + '</b>'
+          + '<span><strong>' + esc(it[1]) + '</strong><small>' + esc(it[2]) + '</small></span>';
+      });
+    }
+
+    // --- card 2: self-checks from real values ------------------------
+    const checks = $('.checks');
+    if (checks) {
+      const c = [];
+      c.push(ck(rec.quality && rec.quality.status !== 'ungradable', 'Quality ' + cap((rec.quality || {}).status || '—')));
+      c.push(ck(true, 'Confidence ' + Math.round((res.confidence || 0) * 100) + '%'));
+      if (ex.xaiScore != null) {
+        c.push(ck(ex.xaiLabel === 'aligned', 'Attention ' + Math.round(ex.xaiScore * 100) + '%'));
+      }
+      if (res.calibration && res.calibration.available) {
+        c.push(ck(true, 'Calibrated (' + res.calibration.method + ')'));
+      }
+      if (res.method) c.push(ck(res.method !== 'rules', 'Grader: ' + res.method));
+      checks.innerHTML = c.join('');
+      const head = checks.parentElement && $('p', checks.parentElement);
+      const pass = c.filter((x) => x.indexOf('check ok') > -1).length;
+      if (head) head.textContent = pass + ' passed · ' + (c.length - pass) + ' to note';
+    }
+
+    // --- card 3: assistant grounded in the record --------------------
+    const asst = $('.assistant');
+    if (asst) {
+      const why = (res.notes && res.notes.length) ? res.notes[0] : null;
+      asst.innerHTML = why
+        ? '<b>Why grade ' + res.grade + '?</b><br>' + esc(why)
+          + ' Calibrated confidence ' + Math.round((res.confidence || 0) * 100) + '%.'
+        : '<b>Grade ' + res.grade + '</b><br>Calibrated confidence '
+          + Math.round((res.confidence || 0) * 100) + '%.';
+    }
+    if (cards[2]) {
+      const prompts = $$('.assistant-prompt', cards[2]);
+      if (prompts[0]) prompts[0].textContent = 'Why grade ' + res.grade + '?';
+    }
+
+    // --- legend tooltips ---------------------------------------------
+    const li = $$('.legend-item');
+    if (li.length >= 4) {
+      li[0].title = 'Microaneurysms: ' + fmtInt(les.maCount) + ' detected';
+      li[1].title = 'Hemorrhages: ' + fmtInt(les.heCount) + ' detected';
+      li[2].title = 'Hard exudates: ' + (les.exudateAreaPct != null
+                      ? Number(les.exudateAreaPct).toFixed(2) + '% retinal area' : 'n/a');
+      li[3].title = 'Neovascularization: ' + (les.nvPresent ? 'present' : 'none detected');
+    }
+  }
+
+  function ck(ok, label) {
+    return '<span class="check' + (ok ? ' ok' : '') + '">'
+         + (ok ? '✓ ' : '⚠ ') + esc(label) + '</span>';
   }
 
   function swapRetinaCanvas(rec) {
@@ -489,20 +586,29 @@
       ].join(' · ') + '<br>' + esc(p.village || '');
     }
 
-    if (!window.NetraAPI.online) {
+    const s = (d.screenings && d.screenings[0]) || null;
+    const hasImages = s && s.images && Object.values(s.images).some(Boolean);
+
+    // Offline the baked snapshot carries the richest record; online the
+    // dossier now carries this screening's own overlays and lesion counts.
+    if (!hasImages) {
       const full = await window.NetraAPI.recordFor(p.patientId);
       if (full) { renderRecord(full); return; }
     }
+    if (!s) return;
 
-    const s = (d.screenings && d.screenings[0]) || null;
-    if (s) {
-      renderRecord({
-        result: { grade: s.grade, gradeLabel: s.gradeLabel, confidence: s.confidence, notes: [] },
-        lesions: {}, routing: s.routing,
-        quality: { status: s.qualityStatus, focusScore: 0 },
-        images: {}, explain: {}
-      });
-    }
+    const les = s.lesions || {};
+    renderRecord({
+      result: {
+        grade: s.grade, gradeLabel: s.gradeLabel,
+        confidence: s.confidence, referable: s.referable, notes: []
+      },
+      lesions: les,
+      routing: s.routing,
+      quality: { status: s.qualityStatus, focusScore: les.focusScore || 0 },
+      images: s.images || {},
+      explain: {}
+    });
   }
 
   // ================================================================
