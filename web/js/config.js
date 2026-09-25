@@ -19,7 +19,7 @@
  * This is the ONLY file that changes between environments.
  */
 window.NETRA_CONFIG = {
-  apiBase: '',
+  apiBase: 'https://repeat-easily-morning-pgp.trycloudflare.com',
 
   // How long to wait for the backend before deciding it's offline (ms).
   probeTimeout: 4000,
