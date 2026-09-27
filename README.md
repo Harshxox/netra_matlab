@@ -49,12 +49,6 @@ lesion counts and calibrated confidence.
 ### Clinician — case review
 ![Doctor case review](docs/screenshots/04-doctor-case.png)
 
-### MATLAB-native app (offline fallback)
-`NetraAppNative` runs the whole workflow in a single MATLAB window via
-`uihtml`, with no browser and no network.
-
-![MATLAB-native login](docs/screenshots/05-matlab-native-login.png)
-
 ---
 
 ## What it does
